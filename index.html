@@ -1,99 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareerPulse Ontario</title>
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CareerPulse Ontario | powered by myBlueprint</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandBlue: '#0092FF',
+          brandNavy: '#22224C',
+          brandOffWhite: '#F6F6FF',
+          brandLightBlue: '#C6E7FF',
+          neutral1: '#E5E9F1',
+          neutral2: '#D9DFEA',
+          neutral3: '#AAB7CB',
+          neutral4: '#65738B',
+          neutral5: '#485163',
+          neutral6: '#252A33',
+        },
+        fontFamily: {
+          sans: ['"Open Sans"', 'sans-serif']
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(37, 42, 51, 0.04), 0 8px 24px -8px rgba(37, 42, 51, 0.10)',
+          cardHover: '0 4px 10px rgba(37, 42, 51, 0.06), 0 20px 40px -12px rgba(0, 146, 255, 0.20)'
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Open Sans', sans-serif; }
+  .fade-out { opacity: 0; transform: translateY(-8px) scale(0.99); transition: opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1); }
+  .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  .stagger-1{animation-delay:.03s}.stagger-2{animation-delay:.08s}.stagger-3{animation-delay:.13s}.stagger-4{animation-delay:.18s}
+  .stagger-5{animation-delay:.23s}.stagger-6{animation-delay:.28s}.stagger-7{animation-delay:.33s}.stagger-8{animation-delay:.38s}
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #AAB7CB; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: #65738B; }
+  .booth-veil { position: fixed; inset: 0; background: #0092FF; opacity: 0; pointer-events: none; z-index: 100; transition: opacity 0.45s ease; }
+  .booth-veil.active { opacity: 1; pointer-events: all; }
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
+<body class="bg-brandOffWhite text-neutral6 antialiased">
 
-    <!-- Simple Navbar -->
-    <nav class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-            <span class="text-2xl">⚡</span>
-            <span class="font-bold text-xl text-indigo-600 tracking-tight">CareerPulse</span>
-            <span class="text-xs bg-indigo-100 text-indigo-800 font-semibold px-2 py-0.5 rounded-full">Ontario</span>
-        </div>
-        <span class="text-sm text-slate-500 font-medium">By myBlueprint</span>
+<!-- ============ TOP NAVBAR ============ -->
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral2">
+  <div class="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <div class="h-9 w-9 rounded-xl bg-brandBlue flex items-center justify-center shadow-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <div class="leading-tight">
+        <p class="font-extrabold text-[15px] tracking-tight">CareerPulse <span class="text-brandBlue">Ontario</span></p>
+        <p class="text-[11px] text-neutral4 font-medium -mt-0.5">powered by myBlueprint</p>
+      </div>
+    </div>
+
+    <nav class="hidden md:flex items-center gap-1 text-sm font-semibold text-neutral5">
+      <a href="#" class="px-3 py-2 rounded-lg text-brandBlue bg-brandLightBlue">Dashboard</a>
+      <a href="#" class="px-3 py-2 rounded-lg hover:text-neutral6 hover:bg-neutral1 transition">Industry Spotlights</a>
+      <a href="https://launchpad.myblueprint.ca/" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-lg hover:text-neutral6 hover:bg-neutral1 transition">LaunchPad</a>
     </nav>
 
-    <!-- Main Content Container -->
-    <main class="max-w-6xl mx-auto px-6 py-12">
-        
-        <!-- Welcome Hero Section -->
-        <section class="text-center max-w-2xl mx-auto mb-16">
-            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
-                Discover the Careers Shaping Ontario's Future
-            </h1>
-            <p class="text-lg text-slate-600">
-                Explore high-growth industries, discover matching high school courses, and connect directly with local employers looking for the next generation of talent.
-            </p>
-        </section>
+    <div class="flex items-center gap-3">
+      <button class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-neutral5 hover:text-brandBlue px-3 py-1.5 rounded-full hover:bg-brandLightBlue transition">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><path d="M12 17h.01"/></svg>
+        Help
+      </button>
+      <div class="h-9 w-9 rounded-full bg-gradient-to-br from-brandBlue to-brandNavy flex items-center justify-center text-white text-xs font-bold shadow-sm">AK</div>
+    </div>
+  </div>
+</header>
 
-        <!-- Section Title -->
-        <div class="border-b border-slate-200 pb-4 mb-8">
-            <h2 class="text-2xl font-bold text-slate-900">Featured High-Growth Industries</h2>
-            <p class="text-sm text-slate-500">Based on regional labor market demands and career shortages.</p>
+<div class="max-w-[1600px] mx-auto flex">
+
+  <!-- ============ MAIN CENTER PANEL ============ -->
+  <main class="flex-1 min-w-0 px-6 py-8">
+    <div class="mb-8 fade-in-up">
+      <h1 class="text-3xl md:text-[2.15rem] font-extrabold tracking-tight leading-[1.15] max-w-2xl">
+        Discover the <em class="italic font-semibold text-brandBlue">careers shaping</em> Ontario's <b class="font-extrabold">future.</b>
+      </h1>
+      <p class="text-neutral5 mt-3 max-w-xl text-[15px] leading-relaxed">
+        Don't just guess what's out there. Step inside the province's fastest-growing industries, see what real jobs look like, and find the pathway that fits your skills.
+      </p>
+    </div>
+
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-neutral4">Ontario's Emerging Industries</h2>
+      <div class="hidden sm:flex items-center gap-2 text-xs font-semibold text-neutral4">
+        <span class="h-2 w-2 rounded-full bg-emerald-400"></span> High demand
+        <span class="h-2 w-2 rounded-full bg-amber-400 ml-3"></span> Fast growing
+        <span class="h-2 w-2 rounded-full bg-sky-400 ml-3"></span> Emerging
+      </div>
+    </div>
+
+    <!-- SECTOR GRID -->
+    <div id="sector-grid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+  </main>
+
+  <!-- ============ RIGHT SIDEBAR: LAUNCHPAD ============ -->
+  <aside class="hidden xl:flex flex-col w-[320px] shrink-0 h-[calc(100vh-64px)] sticky top-16 border-l border-neutral2 px-5 py-8">
+    <div class="flex items-center justify-between mb-1">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-neutral4">LaunchPad</h2>
+      <span class="text-[11px] font-bold text-brandBlue bg-brandLightBlue px-2 py-0.5 rounded-full">Quick Watches</span>
+    </div>
+    <p class="text-xs text-neutral4 mb-5">60-second "Day in the Life" clips from real Ontario workers.</p>
+
+    <div id="launchpad-feed" class="flex-1 overflow-y-auto -mr-2 pr-2 space-y-4"></div>
+
+    <button class="mt-4 w-full text-xs font-bold text-brandBlue border border-brandLightBlue bg-brandLightBlue hover:bg-brandLightBlue/70 transition rounded-xl py-2.5">
+      See all 42 clips →
+    </button>
+  </aside>
+</div>
+
+<!-- Transition veil for Stage 1 → Stage 2 handoff -->
+<div id="booth-veil" class="booth-veil"></div>
+
+<script>
+/* =========================================================================
+   CAREERPULSE — STAGE 1 CONTROLLER
+   Data + rendering for the dashboard, plus the handoff hook into
+   Stage 2 (The Employer Booth). Clicking anywhere on a sector card
+   resolves a random sponsor and hands off a payload that spotlight.html
+   reads via ?sector= and ?sponsor= query params.
+   ========================================================================= */
+
+const ICONS = {
+  healthcare: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
+  trades: '<path d="m14.7 6.3 3 3L7 20H4v-3z"/><path d="m17.7 3.3 3 3-2.5 2.5-3-3z"/>',
+  green: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 9.3 17 9.3S12.5 9 11 20z"/><path d="M11 20c0-6 3-9 8-9"/>',
+  tech: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>',
+  manufacturing: '<path d="M2 20h20"/><path d="M4 20V10l5 4V10l5 4V10l5 4v6"/>',
+  agrifood: '<path d="M12 2c4 3 6 6 6 10a6 6 0 0 1-12 0c0-4 2-7 6-10z"/><path d="M12 12v10"/>',
+  aerospace: '<path d="m17.8 19.1 2-1L18 12l1.8-4.8a1.5 1.5 0 0 0-2.6-1.5L14 10l-6.5-2.2-1.4 1.4L11 12l-3 3H5l-1.5 1.5 3 1 1 3L9 19v-3l3-3 3.1 4.9z"/>',
+  logistics: '<rect x="1" y="7" width="15" height="10" rx="1"/><path d="M16 10h4l3 3v4h-7z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>'
+};
+
+const SECTORS = [
+  {
+    id: 'healthcare', name: 'Healthcare', icon: 'healthcare',
+    tag: 'High demand', tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+    stat: '32,000+ openings projected in Ontario by 2027',
+    careers: ['Registered Nurse', 'Paramedic', 'Diagnostic Sonographer'],
+    accent: 'from-rose-50 to-white', ring: 'group-hover:ring-rose-200',
+    sponsors: ['Ontario Health Network', 'SickKids Careers', 'St. Michael\u2019s Hospital', 'ParaMed Home Health', 'Trillium Health Partners']
+  },
+  {
+    id: 'trades', name: 'Skilled Trades', icon: 'trades',
+    tag: 'High demand', tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+    stat: '1 in 5 retiring trades workers by 2028',
+    careers: ['Electrician', 'Welder', 'HVAC Technician'],
+    accent: 'from-amber-50 to-white', ring: 'group-hover:ring-amber-200',
+    sponsors: ['IBEW Local 353', 'Skills Ontario', 'EllisDon Trades', 'Modern Niagara', 'Ontario Pipe Trades']
+  },
+  {
+    id: 'green', name: 'Green Energy', icon: 'green',
+    tag: 'Fast growing', tagColor: 'bg-amber-50 text-amber-700 border-amber-100',
+    stat: '65% job growth in clean tech since 2020',
+    careers: ['Solar Installer', 'Wind Technician', 'Sustainability Analyst'],
+    accent: 'from-lime-50 to-white', ring: 'group-hover:ring-lime-200',
+    sponsors: ['Ontario Power Generation', 'Northland Power', 'EcoCharge Solutions', 'Hydro One Careers']
+  },
+  {
+    id: 'tech', name: 'AI / Tech', icon: 'tech',
+    tag: 'Fast growing', tagColor: 'bg-amber-50 text-amber-700 border-amber-100',
+    stat: '#2 tech hiring hub in North America (Toronto-Waterloo)',
+    careers: ['Machine Learning Engineer', 'UX Designer', 'Cybersecurity Analyst'],
+    accent: 'from-brandLightBlue/50 to-white', ring: 'group-hover:ring-brandBlue/30',
+    sponsors: ['Shopify', 'OpenText', 'Vector Institute', 'BlackBerry QNX', 'Klick Health']
+  },
+  {
+    id: 'manufacturing', name: 'Advanced Manufacturing', icon: 'manufacturing',
+    tag: 'High demand', tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+    stat: '750,000+ jobs across Ontario\u2019s manufacturing sector',
+    careers: ['Robotics Technician', 'Industrial Engineer', 'CNC Machinist'],
+    accent: 'from-neutral1 to-white', ring: 'group-hover:ring-neutral3',
+    sponsors: ['Magna International', 'Linamar', 'Toyota Motor Mfg. Canada', 'ATS Corporation']
+  },
+  {
+    id: 'agrifood', name: 'Agri-Food', icon: 'agrifood',
+    tag: 'Emerging', tagColor: 'bg-sky-50 text-sky-700 border-sky-100',
+    stat: 'Ontario\u2019s #1 economic sector by GDP contribution',
+    careers: ['Food Scientist', 'Agronomist', 'Supply Chain Planner'],
+    accent: 'from-green-50 to-white', ring: 'group-hover:ring-green-200',
+    sponsors: ['Maple Leaf Foods', 'Sofina Foods', 'Ontario Agri-Food Alliance', 'Gay Lea Foods']
+  },
+  {
+    id: 'aerospace', name: 'Aerospace', icon: 'aerospace',
+    tag: 'Emerging', tagColor: 'bg-sky-50 text-sky-700 border-sky-100',
+    stat: 'Canada\u2019s 3rd largest aerospace sector by revenue',
+    careers: ['Aircraft Maintenance Engineer', 'Avionics Technician', 'Flight Test Analyst'],
+    accent: 'from-violet-50 to-white', ring: 'group-hover:ring-violet-200',
+    sponsors: ['Bombardier', 'Pratt & Whitney Canada', 'de Havilland Canada', 'MDA Space']
+  },
+  {
+    id: 'logistics', name: 'Logistics', icon: 'logistics',
+    tag: 'Fast growing', tagColor: 'bg-amber-50 text-amber-700 border-amber-100',
+    stat: 'Ontario moves $1.2T in goods annually',
+    careers: ['Supply Chain Coordinator', 'Fleet Dispatcher', 'Warehouse Automation Tech'],
+    accent: 'from-orange-50 to-white', ring: 'group-hover:ring-orange-200',
+    sponsors: ['Purolator', 'FreshCo Distribution', 'CN Rail', 'GTAA Cargo', 'Maple Lodge Logistics']
+  }
+];
+
+const LAUNCHPAD_CLIPS = [
+  { title: 'Suiting up for a night shift ICU round', person: 'Priya, RN \u2014 Trillium Health', len: '0:58', hue: 'from-rose-400 to-rose-600' },
+  { title: 'Wiring a highrise from the 40th floor', person: 'Marcus, Electrician \u2014 IBEW 353', len: '1:04', hue: 'from-amber-400 to-amber-600' },
+  { title: 'Inside a wind turbine blade, 90m up', person: 'Sam, Technician \u2014 Northland Power', len: '0:47', hue: 'from-lime-400 to-lime-600' },
+  { title: 'Training a model that reads X-rays', person: 'Wei, ML Engineer \u2014 Vector Institute', len: '1:12', hue: 'from-brandBlue to-brandNavy' },
+  { title: 'Programming a welding robot arm', person: 'Alicia, Eng. \u2014 Linamar', len: '0:51', hue: 'from-neutral4 to-neutral6' },
+  { title: 'Tasting-testing the next big snack', person: 'Devon, Food Scientist \u2014 Sofina', len: '0:39', hue: 'from-green-400 to-green-600' },
+  { title: 'Torque-checking a jet engine mount', person: 'Farah, AME \u2014 Pratt & Whitney', len: '1:20', hue: 'from-violet-400 to-violet-600' },
+  { title: 'Routing 400 packages before 6am', person: 'Jordan, Dispatcher \u2014 Purolator', len: '0:55', hue: 'from-orange-400 to-orange-600' }
+];
+
+function sectorCard(sector, index) {
+  return `
+    <div
+      class="sector-card group relative bg-white rounded-2xl border border-neutral2 shadow-card hover:shadow-lg hover:-translate-y-1 cursor-pointer ring-1 ring-transparent ${sector.ring} transition-all duration-300 overflow-hidden fade-in-up stagger-${index + 1}"
+      data-sector-id="${sector.id}">
+      <div class="absolute inset-0 bg-gradient-to-br ${sector.accent} opacity-70 pointer-events-none"></div>
+      <div class="relative p-5">
+        <div class="flex items-start justify-between">
+          <div class="h-11 w-11 rounded-xl bg-white border border-neutral2 shadow-sm flex items-center justify-center text-brandBlue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[sector.icon]}</svg>
+          </div>
+          <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border ${sector.tagColor}">${sector.tag}</span>
         </div>
 
-        <!-- Industry Cards Grid -->
-        <div class="grid md:grid-cols-3 gap-6">
+        <h3 class="mt-4 text-[17px] font-extrabold tracking-tight text-neutral6">${sector.name}</h3>
+        <p class="text-[13px] text-neutral5 mt-1 leading-snug min-h-[34px]">${sector.stat}</p>
 
-            <!-- Card 1: Healthcare -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                <div class="text-3xl mb-4">🏥</div>
-                <h3 class="font-bold text-lg text-slate-900 mb-2">Healthcare & Social Services</h3>
-                <p class="text-sm text-slate-600 mb-4">Our community's health is top priority. Major shortages mean high demand for caring individuals.</p>
-                <div class="space-y-2 mb-6">
-                    <span class="block text-xs font-semibold text-indigo-600 uppercase tracking-wider">Top Careers:</span>
-                    <ul class="text-xs text-slate-500 space-y-1">
-                        <li>• Registered Nurse</li>
-                        <li>• Medical Laboratory Tech</li>
-                    </ul>
-                </div>
-                <button class="w-full bg-slate-900 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-slate-800 transition-colors">
-                    Explore Pathway
-                </button>
-            </div>
-
-            <!-- Card 2: Skilled Trades -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                <div class="text-3xl mb-4">🏗️</div>
-                <h3 class="font-bold text-lg text-slate-900 mb-2">Skilled Trades (Construction)</h3>
-                <p class="text-sm text-slate-600 mb-4">Help build Ontario's future housing and infrastructure. Earn great pay while training on the job.</p>
-                <div class="space-y-2 mb-6">
-                    <span class="block text-xs font-semibold text-indigo-600 uppercase tracking-wider">Top Careers:</span>
-                    <ul class="text-xs text-slate-500 space-y-1">
-                        <li>• Electrical Apprentice</li>
-                        <li>• Heavy Equipment Operator</li>
-                    </ul>
-                </div>
-                <button class="w-full bg-slate-900 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-slate-800 transition-colors">
-                    Explore Pathway
-                </button>
-            </div>
-
-            <!-- Card 3: Tech & AI -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                <div class="text-3xl mb-4">💻</div>
-                <h3 class="font-bold text-lg text-slate-900 mb-2">Tech, AI & Digital Infrastructure</h3>
-                <p class="text-sm text-slate-600 mb-4">Build the apps, cybersecurity systems, and AI tools that keep Canadian organizations moving forward.</p>
-                <div class="space-y-2 mb-6">
-                    <span class="block text-xs font-semibold text-indigo-600 uppercase tracking-wider">Top Careers:</span>
-                    <ul class="text-xs text-slate-500 space-y-1">
-                        <li>• Cybersecurity Analyst</li>
-                        <li>• Software Developer</li>
-                    </ul>
-                </div>
-                <button class="w-full bg-slate-900 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-slate-800 transition-colors">
-                    Explore Pathway
-                </button>
-            </div>
-
+        <div class="mt-4">
+          <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4 mb-1.5">Hot careers</p>
+          <ul class="space-y-1">
+            ${sector.careers.map(c => `
+              <li class="flex items-center gap-1.5 text-[13px] font-medium text-neutral5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-brandBlue shrink-0"><path d="M20 6 9 17l-5-5"/></svg>
+                ${c}
+              </li>`).join('')}
+          </ul>
         </div>
-    </main>
 
+        <button
+          class="explore-btn mt-5 w-full flex items-center justify-center gap-1.5 bg-brandNavy group-hover:bg-brandBlue text-white text-[13px] font-bold py-2.5 rounded-xl transition-colors duration-300"
+          data-sector-id="${sector.id}">
+          Explore Sector
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-0.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>`;
+}
+
+function launchpadItem(clip, index) {
+  return `
+    <div class="group flex gap-3 items-start cursor-pointer fade-in-up stagger-${index + 1}">
+      <div class="relative shrink-0 w-16 h-24 rounded-xl bg-gradient-to-br ${clip.hue} overflow-hidden shadow-sm">
+        <div class="absolute inset-0 bg-black/10 group-hover:bg-black/25 transition"></div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="h-7 w-7 rounded-full bg-white/90 flex items-center justify-center shadow group-hover:scale-110 transition-transform">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" class="text-neutral6 translate-x-[1px]"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <span class="absolute bottom-1 right-1 text-[9px] font-bold text-white bg-black/40 rounded px-1 py-0.5">${clip.len}</span>
+      </div>
+      <div class="min-w-0 pt-0.5">
+        <p class="text-[13px] font-semibold text-neutral6 leading-snug line-clamp-2 group-hover:text-brandBlue transition">${clip.title}</p>
+        <p class="text-[11px] text-neutral4 mt-1">${clip.person}</p>
+      </div>
+    </div>`;
+}
+
+document.getElementById('sector-grid').innerHTML = SECTORS.map(sectorCard).join('');
+document.getElementById('launchpad-feed').innerHTML = LAUNCHPAD_CLIPS.map(launchpadItem).join('');
+
+/* ---------------------------------------------------------------------
+   HANDOFF HOOK — Stage 1 → Stage 2
+   Clicking anywhere on a sector card (including the visible "Explore
+   Sector" button, since clicks bubble up to the card) resolves a
+   random sponsor for that sector, plays a fade-out transition, and
+   navigates to spotlight.html with the sector/sponsor as query params.
+   --------------------------------------------------------------------- */
+function pickRandomSponsor(sector) {
+  const i = Math.floor(Math.random() * sector.sponsors.length);
+  return sector.sponsors[i];
+}
+
+function routeToBooth(sectorId) {
+  const sector = SECTORS.find(s => s.id === sectorId);
+  if (!sector) return;
+
+  const sponsor = pickRandomSponsor(sector);
+  const payload = {
+    sectorId: sector.id,
+    sectorName: sector.name,
+    routedSponsor: sponsor,
+    allSponsorsInSector: sector.sponsors,
+    otherSectors: SECTORS.filter(s => s.id !== sector.id).map(s => ({ id: s.id, name: s.name }))
+  };
+
+  const veil = document.getElementById('booth-veil');
+  const wrapper = document.querySelector('.max-w-\\[1600px\\].mx-auto.flex');
+
+  wrapper.classList.add('fade-out');
+
+  setTimeout(() => {
+    veil.classList.add('active');
+  }, 420);
+
+  setTimeout(() => {
+    // ---- STAGE 2 HANDOFF ----
+    console.log('%c[CareerPulse] Routing to Employer Booth', 'color:#0092FF;font-weight:bold;');
+    console.log(payload);
+
+    // Hand off to Stage 2 (spotlight.html), which reads ?sector= and
+    // ?sponsor= on load to deep-link straight into the matching booth.
+    const url = `spotlight.html?sector=${encodeURIComponent(payload.sectorId)}&sponsor=${encodeURIComponent(payload.routedSponsor)}`;
+    window.location.href = url;
+  }, 620);
+}
+
+// Whole-card click: delegated on the grid so a click anywhere on a
+// card (not just the "Explore Sector" button) triggers the handoff.
+document.getElementById('sector-grid').addEventListener('click', (e) => {
+  const card = e.target.closest('.sector-card');
+  if (!card) return;
+  routeToBooth(card.dataset.sectorId);
+});
+</script>
 </body>
 </html>
