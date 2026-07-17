@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sector Spotlight | CareerPulse Ontario</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandBlue: '#0092FF',
+          brandNavy: '#22224C',
+          brandOffWhite: '#F6F6FF',
+          brandLightBlue: '#C6E7FF',
+          neutral1: '#E5E9F1',
+          neutral2: '#D9DFEA',
+          neutral3: '#AAB7CB',
+          neutral4: '#65738B',
+          neutral5: '#485163',
+          neutral6: '#252A33',
+        },
+        fontFamily: {
+          sans: ['"Open Sans"', 'sans-serif']
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(37, 42, 51, 0.04), 0 8px 24px -8px rgba(37, 42, 51, 0.10)',
+          cardHover: '0 4px 10px rgba(37, 42, 51, 0.06), 0 20px 40px -12px rgba(0, 146, 255, 0.20)'
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<!-- Sector/sponsor content lives in sponsorData.js, loaded here so it's
+     ready before the inline controller script at the bottom of body runs. -->
+<script src="sponsorData.js"></script>
+<style>
+  body { font-family: 'Open Sans', sans-serif; }
+  .fade-in-up { animation: fadeInUp 0.5s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .stagger-1{animation-delay:.05s}.stagger-2{animation-delay:.1s}.stagger-3{animation-delay:.15s}.stagger-4{animation-delay:.2s}.stagger-5{animation-delay:.25s}
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #AAB7CB; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: #65738B; }
+  @keyframes trackedGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(0,146,255,0); } 50% { box-shadow: 0 0 0 6px rgba(0,146,255,0.12); } }
+  .tracked-pulse { animation: trackedGlow 1.8s ease-in-out 2; }
+</style>
+</head>
+<body class="bg-brandOffWhite text-neutral6 antialiased">
+
+<!-- ============ TOP NAVBAR (identical across the app) ============ -->
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral2">
+  <div class="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <div class="h-9 w-9 rounded-xl bg-brandBlue flex items-center justify-center shadow-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <div class="leading-tight">
+        <p class="font-extrabold text-[15px] tracking-tight">CareerPulse <span class="text-brandBlue">Ontario</span></p>
+        <p class="text-[11px] text-neutral4 font-medium -mt-0.5">powered by myBlueprint</p>
+      </div>
+    </div>
+
+    <nav class="hidden md:flex items-center gap-1 text-sm font-semibold text-neutral5">
+      <a href="index.html" class="px-3 py-2 rounded-lg hover:text-neutral6 hover:bg-neutral1 transition">Dashboard</a>
+      <a href="sector.html" class="px-3 py-2 rounded-lg text-brandBlue bg-brandLightBlue">Industry Spotlights</a>
+      <a href="https://launchpad.myblueprint.ca/" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-lg hover:text-neutral6 hover:bg-neutral1 transition">LaunchPad</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ MAIN CONTENT — everything below is empty until render() populates it ============ -->
+<div class="max-w-[1200px] mx-auto px-6 py-8">
+  <a href="index.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-neutral4 hover:text-brandBlue transition mb-5">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+    Back to Dashboard
+  </a>
+
+  <div id="sector-header"></div>
+  <div id="sector-hooks" class="mt-7"></div>
+  <div id="sector-body" class="mt-8 flex flex-col md:flex-row gap-8 items-start"></div>
+</div>
+
+<script>
+/* =========================================================================
+   CAREERPULSE — SECTOR LANDING PAGE CONTROLLER
+   "Sexy Sector Landing Page" model: every sector is a complete,
+   standalone Ontario LMI educational page. Sponsors are an optional
+   premium layer rendered in a right-hand "teaser" panel — never a
+   requirement for the page to be valuable.
+
+   ARCHITECTURE (post Theater-Mode-removal):
+   The sidebar is now a lightweight teaser only (logo/name, bio, video,
+   and a "Visit [Sponsor] Booth" CTA). Both the Activity Tiles and the
+   sidebar CTA route via routeToBooth() to a full page load of this
+   same sector.html with extra query params — there is no modal. On
+   load, if ?activity=true is present, the page renders the requested
+   activity (quick snapshot or the milestone quiz) inline into
+   the requested Tier 1/Tier 2 activity there.
+
+   URL contract:
+     ?id=<sectorId>            - which sector to show (random if missing/invalid)
+     &track=<sponsor trackId>  - optional referral tracking (e.g. a sponsor's
+                                 own QR code linking to ?id=green&track=win)
+     &activity=true            - tells the page to open the Sponsor Booth /
+                                 activity section on load
+     &mode=quick|deep          - which activity to open (default: deep)
+     &sponsor=<sponsor trackId> - which sponsor's booth to open (deep mode)
+   ========================================================================= */
+
+const ICONS = {
+  healthcare: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
+  trades: '<path d="m14.7 6.3 3 3L7 20H4v-3z"/><path d="m17.7 3.3 3 3-2.5 2.5-3-3z"/>',
+  green: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 9.3 17 9.3S12.5 9 11 20z"/><path d="M11 20c0-6 3-9 8-9"/>',
+  tech: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>',
+  manufacturing: '<path d="M2 20h20"/><path d="M4 20V10l5 4V10l5 4V10l5 4v6"/>',
+  agrifood: '<path d="M12 2c4 3 6 6 6 10a6 6 0 0 1-12 0c0-4 2-7 6-10z"/><path d="M12 12v10"/>',
+  aerospace: '<path d="m17.8 19.1 2-1L18 12l1.8-4.8a1.5 1.5 0 0 0-2.6-1.5L14 10l-6.5-2.2-1.4 1.4L11 12l-3 3H5l-1.5 1.5 3 1 1 3L9 19v-3l3-3 3.1 4.9z"/>',
+  logistics: '<rect x="1" y="7" width="15" height="10" rx="1"/><path d="M16 10h4l3 3v4h-7z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>',
+  tourism: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>'
+};
+
+// ---- Placeholder analytics hook — wire this up to real tracking later ----
+function logSponsorInteraction(sponsorName) {
+  console.log('%c[CareerPulse] Sponsor interaction tracked', 'color:#0092FF;font-weight:bold;', sponsorName);
+}
+
+function pickRandomSectorId() {
+  const keys = Object.keys(sponsorData);
+  return keys[Math.floor(Math.random() * keys.length)];
+}
+
+/* ---------------------------------------------------------------------
+   HEADER — sector title, tagline, SHSM pathway badges, "Ontario
+   Outlook" growth badge. (This is the piece that keeps getting asked
+   about — renderShsmBadges is called from renderHeader below, and
+   sponsorData.js supplies 6 courses + shsmConnections per sector.)
+   --------------------------------------------------------------------- */
+function renderShsmBadges(sector) {
+  const connections = Array.isArray(sector.shsmConnections) ? sector.shsmConnections : [];
+  if (connections.length === 0) return '';
+
+  return `
+    <div class="mt-4">
+      <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4 mb-2">Eligible Ontario SHSM Pathways</p>
+      <div class="flex flex-wrap gap-2">
+        ${connections.map(name => `
+          <span class="inline-flex items-center gap-1.5 bg-brandNavy text-white text-xs font-bold pl-2.5 pr-3.5 py-1.5 rounded-full">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+            ${name}
+          </span>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderHeader(sector) {
+  document.getElementById('sector-header').innerHTML = `
+    <div class="fade-in-up">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="h-12 w-12 rounded-2xl bg-white border border-neutral2 shadow-card flex items-center justify-center text-brandBlue shrink-0">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[sector.icon]}</svg>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05] text-neutral6">${sector.name}</h1>
+      </div>
+      <p class="text-neutral5 text-base md:text-lg leading-relaxed max-w-2xl">${sector.tagline}</p>
+
+      ${renderShsmBadges(sector)}
+
+      <div class="inline-flex items-start gap-2.5 bg-white border border-neutral2 rounded-2xl pl-4 pr-5 py-3 shadow-card mt-5 max-w-xl">
+        <span class="h-6 w-6 rounded-full bg-brandLightBlue flex items-center justify-center shrink-0 mt-0.5">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="text-brandBlue"><path d="m3 17 6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>
+        </span>
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4">Ontario Outlook \u00b7 2026\u20132030</p>
+          <p class="text-sm font-bold text-neutral6 mt-0.5 leading-snug">${sector.marketOutlook}</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ---------------------------------------------------------------------
+   LEFT COLUMN — the educational hero content. This alone must be a
+   complete, valuable page even when a sector has zero sponsors.
+   --------------------------------------------------------------------- */
+function renderSalaryCard(sector) {
+  const parts = sector.earningPotential.split('\u2192').map(s => s.trim());
+  const [entryPart, seniorPart] = parts.length === 2 ? parts : [sector.earningPotential, ''];
+
+  return `
+    <div class="bg-white rounded-2xl border border-neutral2 shadow-card p-6 fade-in-up stagger-1">
+      <div class="flex items-center gap-2.5 mb-4">
+        <span class="h-8 w-8 rounded-lg bg-brandLightBlue flex items-center justify-center text-brandBlue shrink-0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </span>
+        <h2 class="text-lg font-extrabold text-neutral6">Salary Brackets</h2>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex-1 bg-brandOffWhite border border-neutral2 rounded-xl p-3.5">
+          <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4">Entry-Level</p>
+          <p class="text-lg font-extrabold text-neutral6 mt-1">${entryPart.replace(/^Entry:\s*/i, '')}</p>
+        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="text-neutral3 shrink-0"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <div class="flex-1 bg-brandLightBlue/40 border border-brandLightBlue rounded-xl p-3.5">
+          <p class="text-[10px] font-bold uppercase tracking-wider text-brandBlue">Senior Pro</p>
+          <p class="text-lg font-extrabold text-brandNavy mt-1">${seniorPart.replace(/^Senior Pro:\s*/i, '')}</p>
+        </div>
+      </div>
+      <p class="text-xs text-neutral4 mt-3 leading-relaxed">Typical range for entry to senior-level roles in this sector across Ontario.</p>
+    </div>`;
+}
+
+function renderPathwaysCard(sector) {
+  return `
+    <div class="bg-white rounded-2xl border border-neutral2 shadow-card p-6 fade-in-up stagger-2">
+      <div class="flex items-center gap-2.5 mb-3">
+        <span class="h-8 w-8 rounded-lg bg-brandLightBlue flex items-center justify-center text-brandBlue shrink-0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>
+        </span>
+        <h2 class="text-lg font-extrabold text-neutral6">Educational Pathways</h2>
+      </div>
+      <p class="text-sm text-neutral5 leading-relaxed">${sector.educationPathways}</p>
+    </div>`;
+}
+
+function renderCourseConnectorCard(sector) {
+  // --- Property alignment: sponsorData.js stores courses as a flat
+  //     array of 6 strings — but we defensively also accept the older
+  //     { list: [...] } shape in case that ever drifts, so this card
+  //     can never silently break again.
+  const rawCourses = sector.courses;
+  const courseList = Array.isArray(rawCourses)
+    ? rawCourses
+    : (rawCourses && Array.isArray(rawCourses.list)) ? rawCourses.list : [];
+  const hasCourses = courseList.length > 0;
+
+  return `
+    <div id="course-connector" class="bg-white rounded-2xl border border-neutral2 shadow-card p-6 fade-in-up stagger-3">
+      <div class="flex items-center gap-2.5 mb-3.5">
+        <span class="h-8 w-8 rounded-lg bg-brandLightBlue flex items-center justify-center text-brandBlue shrink-0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        <h2 class="text-lg font-extrabold text-neutral6">Recommended High School Courses</h2>
+      </div>
+      <div id="sector-courses" class="grid sm:grid-cols-2 gap-2.5">
+        ${hasCourses ? courseList.map(c => `
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-brandOffWhite border border-neutral2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="text-brandBlue shrink-0"><path d="M20 6 9 17l-5-5"/></svg>
+            <span class="text-sm font-semibold text-neutral6">${c}</span>
+          </div>`).join('') : `
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-brandOffWhite border border-neutral2 sm:col-span-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="text-neutral4 shrink-0"><path d="M20 6 9 17l-5-5"/></svg>
+            <span class="text-sm font-semibold text-neutral5">OSSD Electives</span>
+          </div>`}
+      </div>
+    </div>`;
+}
+
+function renderCareerImpactCard(sector) {
+  return `
+    <div id="career-impact" class="bg-white rounded-2xl border border-neutral2 shadow-card p-6 fade-in-up stagger-4">
+      <div class="flex items-center gap-2.5 mb-3.5">
+        <span class="h-8 w-8 rounded-lg bg-brandLightBlue flex items-center justify-center text-brandBlue shrink-0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        </span>
+        <h2 class="text-lg font-extrabold text-neutral6">Career Impact</h2>
+      </div>
+      <div class="space-y-3">
+        ${sector.careers.map(c => `
+          <div class="flex gap-3 px-4 py-3.5 rounded-xl bg-brandOffWhite border border-neutral2">
+            <span class="h-7 w-7 rounded-full bg-white border border-neutral2 flex items-center justify-center text-brandBlue shrink-0 mt-0.5">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+            <div>
+              <p class="text-sm font-extrabold text-neutral6">${c.title}</p>
+              <p class="text-xs text-neutral5 leading-relaxed mt-0.5">${c.description}</p>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderHeroContent(sector) {
+  return `
+    <div class="flex-1 min-w-0 space-y-5">
+      ${renderSalaryCard(sector)}
+      ${renderPathwaysCard(sector)}
+      ${renderCourseConnectorCard(sector)}
+      ${renderCareerImpactCard(sector)}
+    </div>`;
+}
+
+/* ---------------------------------------------------------------------
+   RIGHT COLUMN — the sponsor "teaser" panel. Only rendered when
+   sponsors exist; otherwise the hero content stretches full-width.
+   Per the latest architecture pivot, this panel ONLY contains: the
+   sponsor logo/name, a brief bio, the video, and a single "Visit
+   [Sponsor] Booth" CTA. No quiz button, no careers strip, no custom
+   links live here anymore — that richer content now lives in the
+   Sponsor Booth (its own page, booth.html, reached via routeToBooth()).
+   --------------------------------------------------------------------- */
+function sponsorVideoBlock(sponsor, sector) {
+  const localSrc = sponsor.videoSrc || sector.fallbackVideo; // fall back to the sector's generic clip
+  const isFallback = !sponsor.videoSrc && !sponsor.youtubeId && !!sector.fallbackVideo;
+
+  if (sponsor.youtubeId) {
+    return `
+      <div class="relative w-full rounded-xl overflow-hidden bg-black aspect-video mt-3.5">
+        <iframe
+          class="absolute inset-0 w-full h-full"
+          src="https://www.youtube-nocookie.com/embed/${sponsor.youtubeId}"
+          title="${sponsor.name} video"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      </div>`;
+  }
+
+  return `
+    <div class="relative w-full max-w-[200px] mx-auto aspect-[9/16] rounded-2xl overflow-hidden bg-black border border-neutral2 mt-3.5">
+      <video
+        class="absolute inset-0 w-full h-full object-cover"
+        src="${localSrc}"
+        controls
+        controlsList="nodownload noremoteplayback"
+        disablePictureInPicture
+        playsinline
+        preload="metadata">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <p class="text-center text-[10px] text-neutral4 mt-2">${sponsor.videoCaption || (isFallback ? `General ${sector.name} careers preview` : 'Featured video')}</p>`;
+}
+
+function sponsorCard(sponsor, sector, sectorId) {
+  return `
+    <div id="sponsor-${sponsor.trackId}" class="sponsor-card bg-white rounded-2xl border border-neutral2 shadow-card p-5">
+      <p class="text-sm font-extrabold text-neutral6">${sponsor.name}</p>
+      <p class="text-xs font-semibold text-neutral4 mt-0.5">${sponsor.role || ''}</p>
+
+      ${sponsorVideoBlock(sponsor, sector)}
+
+      <p class="text-xs text-neutral5 leading-relaxed mt-3.5">${sponsor.bio}</p>
+
+      <button
+        class="visit-booth-btn mt-4 w-full flex items-center justify-center gap-2 bg-brandBlue hover:bg-brandNavy text-white text-sm font-bold py-3 rounded-xl shadow-sm shadow-brandBlue/20 transition"
+        data-sector-id="${sectorId}" data-sponsor-track="${sponsor.trackId}">
+        Visit ${sponsor.name} Booth
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+    </div>`;
+}
+
+function renderRightColumn(sector, sectorId) {
+  const hasSponsors = sector.sponsors && sector.sponsors.length > 0;
+
+  if (hasSponsors) {
+    return `
+      <aside class="w-full md:w-[360px] shrink-0 md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] md:overflow-y-auto space-y-4 fade-in-up stagger-5">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-neutral4 px-1">Featured Ontario Employers</p>
+        ${sector.sponsors.map(sp => sponsorCard(sp, sector, sectorId)).join('')}
+      </aside>`;
+  }
+
+  // No sponsors yet — don't destroy the media space. Show a standard
+  // (landscape) video player pre-loaded with the sector's fallbackVideo
+  // so the page still feels complete and visually rich.
+  return `
+    <aside class="w-full md:w-[360px] shrink-0 md:sticky md:top-24 fade-in-up stagger-5">
+      <p class="text-[11px] font-bold uppercase tracking-wider text-neutral4 px-1 mb-2">Industry Preview</p>
+      <div class="bg-white rounded-2xl border border-neutral2 shadow-card p-5">
+        <div class="relative w-full rounded-xl overflow-hidden bg-black border border-neutral2 aspect-video">
+          <video
+            class="absolute inset-0 w-full h-full object-cover"
+            src="${sector.fallbackVideo}"
+            controls
+            playsinline
+            preload="metadata">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <p class="text-center text-[11px] text-neutral4 mt-3">General ${sector.name} careers preview</p>
+
+        <div class="mt-4 rounded-xl bg-brandLightBlue/40 border border-brandLightBlue px-4 py-3 text-center">
+          <p class="text-xs font-bold text-brandNavy">No employer partners yet</p>
+          <p class="text-[11px] text-neutral5 mt-1 leading-relaxed">Check back soon, or explore the courses and careers on the left.</p>
+        </div>
+      </div>
+    </aside>`;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITY HOOKS — "Industry Spotlight - Student Activities"
+   The gamified tiles at the top of the page. They no longer open a
+   modal — clicking either one calls routeToBooth(), which navigates
+   (full page load) to this same sector.html with query params telling
+   it to the dedicated Sponsor Booth page (booth.html).
+   --------------------------------------------------------------------- */
+function renderActivityHooks(sector, sectorId) {
+  const questSponsor = (sector.sponsors || []).find(sp => sp.quiz);
+  const featuredSponsor = questSponsor || (sector.sponsors && sector.sponsors[0]) || null;
+  const hasQuiz = !!questSponsor;
+
+  document.getElementById('sector-hooks').innerHTML = `
+    <div class="fade-in-up">
+      <h3 class="text-lg font-extrabold text-neutral6 mb-3">Industry Spotlight \u2014 Student Activities</h3>
+      <div class="grid sm:grid-cols-2 gap-5">
+
+        <button id="quick-glance-tile" class="group relative text-left rounded-2xl p-6 overflow-hidden bg-gradient-to-br from-brandBlue via-sky-500 to-brandLightBlue shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_-10px_rgba(0,146,255,0.55)]">
+          <div class="absolute -top-10 -right-10 h-36 w-36 rounded-full bg-white/10 group-hover:scale-110 transition-transform duration-300"></div>
+          <div class="relative">
+            <div class="flex items-center justify-between mb-4">
+              <span class="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-white shrink-0 group-hover:rotate-6 transition-transform duration-300">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+              </span>
+              <span class="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-white text-[11px] font-extrabold px-3 py-1.5 rounded-full">
+                \u23f1\ufe0f 5 Mins
+              </span>
+            </div>
+            <p class="text-xl font-extrabold text-white mb-1.5">Quick Glance</p>
+            <p class="text-sm text-white/85 leading-relaxed mb-5">A 2\u20135 minute rapid exploration of this sector \u2014 perfect for a quick peek between classes.</p>
+            <span class="inline-flex items-center gap-2 bg-white text-brandBlue text-sm font-extrabold px-4 py-2.5 rounded-xl group-hover:gap-3 transition-all shadow-sm">
+              Start Challenge
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+          </div>
+        </button>
+
+        <button id="in-depth-tile" class="group relative text-left rounded-2xl p-6 overflow-hidden bg-gradient-to-br from-brandNavy via-violet-800 to-fuchsia-700 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_-10px_rgba(139,92,246,0.55)]">
+          <div class="absolute -top-10 -right-10 h-36 w-36 rounded-full bg-white/10 group-hover:scale-110 transition-transform duration-300"></div>
+          <div class="relative">
+            <div class="flex items-center justify-between mb-4">
+              <span class="h-12 w-12 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-amber-300 shrink-0 group-hover:rotate-6 transition-transform duration-300">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0Z"/><path d="M17 5h2.5a2.5 2.5 0 0 1 0 5H17"/><path d="M7 5H4.5a2.5 2.5 0 0 0 0 5H7"/></svg>
+              </span>
+              <span class="inline-flex items-center gap-1 bg-white/15 backdrop-blur text-white text-[11px] font-extrabold px-3 py-1.5 rounded-full">
+                \ud83c\udfc6 Earn Credentials
+              </span>
+            </div>
+            <p class="text-xl font-extrabold text-white mb-1.5">In-Depth Exploration</p>
+            <p class="text-sm text-fuchsia-100 leading-relaxed mb-5">Learn, explore, and earn sector credentials \u2014 the full SHSM and GLC2O-aligned pathway.</p>
+            <span class="inline-flex items-center gap-2 bg-white text-brandNavy text-sm font-extrabold px-4 py-2.5 rounded-xl group-hover:gap-3 transition-all shadow-sm">
+              ${hasQuiz ? 'Enter Simulation' : 'Explore the Pathway'}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+          </div>
+        </button>
+
+      </div>
+    </div>`;
+
+  document.getElementById('quick-glance-tile').addEventListener('click', () => {
+    routeToBooth(sectorId, featuredSponsor ? featuredSponsor.trackId : null, 'tier1');
+  });
+  document.getElementById('in-depth-tile').addEventListener('click', () => {
+    routeToBooth(sectorId, featuredSponsor ? featuredSponsor.trackId : null, 'tier2');
+  });
+}
+
+/* ---------------------------------------------------------------------
+   ROUTING — the Sponsor Booth is now its own dedicated page (booth.html),
+   not a section of this page. Both Activity Tiles and the sidebar's
+   "Visit [Sponsor] Booth" button call this, which does a full page
+   navigation to booth.html carrying the sponsor, the requested activity
+   tier, and this sector's id (so booth.html has sector-level context
+   even when a sector has no sponsor to feature yet).
+   --------------------------------------------------------------------- */
+function routeToBooth(sectorId, sponsorTrackId, action) {
+  const params = new URLSearchParams();
+  params.set('id', sectorId);
+  params.set('action', action || 'tier1');
+  if (sponsorTrackId) params.set('sponsor', sponsorTrackId);
+
+  console.log('%c[CareerPulse] Routing to Sponsor Booth', 'color:#0092FF;font-weight:bold;', { sectorId, sponsorTrackId, action });
+  window.location.href = `booth.html?${params.toString()}`;
+}
+
+/* ---------------------------------------------------------------------
+   TOP-LEVEL RENDER
+   --------------------------------------------------------------------- */
+function render(sectorId) {
+  const sector = sponsorData[sectorId];
+
+  renderHeader(sector);
+  renderActivityHooks(sector, sectorId);
+
+  const bodyEl = document.getElementById('sector-body');
+  bodyEl.innerHTML = renderHeroContent(sector) + renderRightColumn(sector, sectorId);
+
+  // Wire up the sidebar's "Visit [Sponsor] Booth" CTA(s) — only present
+  // when the sector actually has sponsors. Always routes to the deep
+  // Tier 2 activity for that specific sponsor.
+  bodyEl.querySelectorAll('.visit-booth-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      routeToBooth(btn.dataset.sectorId, btn.dataset.sponsorTrack, 'tier2');
+    });
+  });
+
+  return sector;
+}
+
+/* ---------------------------------------------------------------------
+   INIT — URL routing, random-sector fallback, and referral tracking.
+   The Sponsor Booth is a separate destination now (booth.html), so
+   this file no longer needs to know about ?activity=/&mode=/&sponsor=.
+   --------------------------------------------------------------------- */
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const requestedId = params.get('id');
+  const trackParam = params.get('track');
+
+  const sectorId = (requestedId && sponsorData[requestedId]) ? requestedId : pickRandomSectorId();
+  const sector = render(sectorId);
+
+  if (trackParam) {
+    const trackedSponsor = (sector.sponsors || []).find(sp => sp.trackId === trackParam);
+    if (trackedSponsor) {
+      logSponsorInteraction(trackedSponsor.name);
+      const card = document.getElementById(`sponsor-${trackedSponsor.trackId}`);
+      if (card) {
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.classList.add('tracked-pulse', 'ring-2', 'ring-brandBlue');
+        }, 300);
+      }
+    }
+  }
+})();
+</script>
+</body>
+</html>
