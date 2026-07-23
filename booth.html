@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- CAREERPULSE BUILD MARKER: booth-html-v4-national-pivot-2026 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -45,15 +46,11 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #AAB7CB; border-radius: 8px; }
   ::-webkit-scrollbar-thumb:hover { background: #65738B; }
-  .quiz-progress-track { display: flex; gap: 6px; }
-  .quiz-progress-seg { flex: 1; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.25); overflow: hidden; }
-  .quiz-progress-seg-fill { height: 100%; width: 0%; background: #ffffff; border-radius: 999px; transition: width 0.4s cubic-bezier(.4,0,.2,1); }
-  .quiz-progress-seg-fill.filled { width: 100%; }
   @keyframes shakeX { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
   .shake { animation: shakeX 0.4s ease; }
-  @keyframes popIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
-  .pop-in { animation: popIn 0.35s cubic-bezier(.16,1,.3,1) both; }
-  html { scroll-behavior: smooth; }
+  @keyframes popIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+  .pop-in { animation: popIn 0.3s cubic-bezier(.16,1,.3,1) both; }
+  input[type="range"] { accent-color: #0092FF; }
 </style>
 </head>
 <body class="bg-brandOffWhite text-neutral6 antialiased">
@@ -61,7 +58,9 @@
 <!-- ============ TOP NAVBAR (identical across the app) ============ -->
 <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral2">
   <div class="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
+    <div class="flex items-center gap-3">
+      <img src="images/myBlueprint logo.png" alt="myBlueprint" class="h-7 w-auto" onerror="this.style.display='none';" />
+      <div class="h-6 w-px bg-neutral2"></div>
       <div class="h-9 w-9 rounded-xl bg-brandBlue flex items-center justify-center shadow-sm">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
       </div>
@@ -70,7 +69,6 @@
         <p class="text-[11px] text-neutral4 font-medium -mt-0.5">powered by myBlueprint</p>
       </div>
     </div>
-
     <nav class="hidden md:flex items-center gap-1 text-sm font-semibold text-neutral5">
       <a href="index.html" class="px-3 py-2 rounded-lg hover:text-neutral6 hover:bg-neutral1 transition">Dashboard</a>
       <a href="sector.html" class="px-3 py-2 rounded-lg hover:text-neutral6 hover:bg-neutral1 transition">Industry Spotlights</a>
@@ -79,67 +77,55 @@
   </div>
 </header>
 
-<!-- ============ BACK BUTTON — top left, so students never feel trapped ============ -->
-<div class="max-w-[1000px] mx-auto px-6 pt-6">
-  <a id="back-to-sector-link" href="sector.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-neutral4 hover:text-brandBlue transition">
+<div class="max-w-[1300px] mx-auto px-6 py-6">
+
+  <!-- Back button -->
+  <a id="back-to-sector-link" href="sector.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-neutral4 hover:text-brandBlue transition mb-5">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
     Back to Sector Spotlight
   </a>
+
+  <!-- Compact booth identity strip (kept small on purpose — the real
+       content lives in the scrollable left pane below) -->
+  <div id="booth-strip" class="mb-6"></div>
+
+  <!-- ============ SPLIT-SCREEN LAYOUT ============
+       Mobile: single column (default flex-col).
+       md+: 2-column grid — left pane scrolls with the page, right pane
+       is sticky and scrolls independently once its content overflows. -->
+  <div class="flex flex-col md:flex-row gap-8 items-start">
+
+    <!-- LEFT PANE — scrollable sponsor educational content -->
+    <div id="booth-left-pane" class="flex-1 min-w-0 space-y-5"></div>
+
+    <!-- RIGHT PANE — sticky, holds the Tier 1 game + Tier 2 form -->
+    <div id="booth-right-pane" class="w-full md:w-[420px] shrink-0 md:sticky md:top-20 md:max-h-[calc(100vh-6rem)] md:overflow-y-auto space-y-5 pb-2"></div>
+
+  </div>
 </div>
-
-<!-- ============ BOOTH HEADER — dynamically themed with the sponsor's
-     sector accent, "logo" initial, name, role, and bio ============ -->
-<div id="booth-header" class="max-w-[1000px] mx-auto px-6 pt-5 pb-2"></div>
-
-<!-- ============ TIER 1 — Quick Glance (massive, distinct section) ============ -->
-<section id="tier1-section" class="scroll-mt-20 mt-8">
-  <div id="tier1-content"></div>
-</section>
-
-<!-- ============ TIER 2 — In-Depth Exploration (massive, distinct section) ============ -->
-<section id="tier2-section" class="scroll-mt-20">
-  <div id="tier2-content"></div>
-</section>
-
-<div class="max-w-[1000px] mx-auto px-6 py-10 text-center">
-  <a href="sector.html" class="inline-flex items-center gap-1.5 text-sm font-bold text-brandBlue hover:text-brandNavy transition">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-    Back to Sector Spotlight
-  </a>
-</div>
-
-<!-- Hidden canvas used to render the downloadable certificate PNG -->
-<canvas id="cert-canvas" width="1200" height="800" class="hidden"></canvas>
 
 <script>
 /* =========================================================================
-   CAREERPULSE — SPONSOR BOOTH (dedicated destination page)
-   Every sponsor's booth lives at this one URL, themed dynamically from
-   ?sponsor=<trackId>. Two massive sections live on every booth:
-     Tier 1 "Quick Glance"      — a light, ~5-minute sector snapshot
-     Tier 2 "In-Depth Exploration" — the 3-step milestone quiz + a
-                                     browser-generated certificate
-   (Tier 2 only fully activates for sponsors with a `.quiz` field —
-   everyone else sees a friendly "coming soon" state.)
+   CAREERPULSE — SPONSOR BOOTH (split-screen model)
+   Left pane: scrollable sponsor content (video, bio, quick facts, careers).
+   Right pane: sticky, holds two low-friction activities instead of a
+   multi-step quiz —
+     Tier 1 "Which Nuclear Career Are You?" — a 5-question personality
+                                        quiz, tap-only, no timer
+     Tier 2 "Accept a Challenge" — a single-step choice + short-answer form
 
-   URL contract:
-     ?sponsor=<sponsor trackId> - which sponsor's booth to show. Sponsor
-                                  trackIds are unique across all sectors,
-                                  so this alone is enough to resolve both
-                                  the sponsor AND its parent sector.
-     &id=<sectorId>             - sector-level fallback/context, used when
-                                  no sponsor is resolved (e.g. a sector
-                                  with no employer partners yet) so the
-                                  booth still shows meaningful content
-                                  instead of breaking.
-     &action=tier1|tier2        - which section to auto-scroll to on load
+   IMPORTANT SCOPE NOTE: the career-matcher quiz and the two WiN Challenge
+   prompts below are specific to Women in Nuclear Canada — they reference
+   her actual video and nuclear-specific content, so they can't reasonably
+   be generic/data-driven the way the old quiz engine was. Any sponsor
+   other than WiN currently sees a friendly "coming soon" state in both
+   tiers. When more sponsors are ready for real activities, each will
+   need its own bespoke Tier 1/Tier 2 build the same way this one is.
 
-   NOTE ON THEMING: sponsor objects in sponsorData.js don't yet carry
-   their own brand colors or logo image — those fields don't exist in
-   the data warehouse yet. This page approximates "the sponsor's brand"
-   using their parent sector's `hue` gradient and icon, and stands in a
-   simple initial badge for a logo. Swap in real per-sponsor branding
-   fields (e.g. sponsor.brandColor, sponsor.logoUrl) once available.
+   URL contract (unchanged):
+     ?sponsor=<sponsor trackId> - resolves both the sponsor and its sector
+     &id=<sectorId>             - fallback context when no sponsor resolves
+     &action=tier1|tier2        - which activity to scroll to on load
    ========================================================================= */
 
 const ICONS = {
@@ -154,17 +140,11 @@ const ICONS = {
   tourism: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>'
 };
 
-const ICON_LIGHTNING = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>';
-const ICON_TROPHY = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0Z"/><path d="M17 5h2.5a2.5 2.5 0 0 1 0 5H17"/><path d="M7 5H4.5a2.5 2.5 0 0 0 0 5H7"/></svg>';
-
 function pickRandomSectorId() {
   const keys = Object.keys(sponsorData);
   return keys[Math.floor(Math.random() * keys.length)];
 }
 
-// Sponsor trackIds are unique across every sector's sponsors array, so
-// a single pass across all sectors is enough to resolve both the
-// sponsor AND which sector (and its hue/icon) it belongs to.
 function findSponsorByTrackId(trackId) {
   for (const sid of Object.keys(sponsorData)) {
     const sec = sponsorData[sid];
@@ -175,526 +155,354 @@ function findSponsorByTrackId(trackId) {
 }
 
 /* ---------------------------------------------------------------------
-   BOOTH HEADER — dynamically themed hero. Uses the resolved sponsor's
-   name/role/bio when present; otherwise falls back to a generic
-   CareerPulse Ontario booth themed around the sector alone.
+   COMPACT BOOTH STRIP — small branded header, not a massive hero. The
+   real content now lives in the left pane per the split-screen design.
    --------------------------------------------------------------------- */
-function renderBoothHeader(sector, sponsor) {
+function renderBoothStrip(sector, sponsor) {
   const initial = (sponsor ? sponsor.name : sector.name).charAt(0).toUpperCase();
   const displayName = sponsor ? sponsor.name : `${sector.name} Booth`;
-  const role = sponsor ? (sponsor.role || '') : 'General Sector Preview';
-  const bio = sponsor ? sponsor.bio : `No employer partner has claimed this booth yet. In the meantime, explore what a career in ${sector.name} actually looks like.`;
 
-  document.getElementById('booth-header').innerHTML = `
-    <div class="fade-in-up rounded-3xl overflow-hidden shadow-cardHover">
-      <div class="relative bg-gradient-to-br ${sector.hue} px-6 sm:px-10 py-10">
-        <div class="absolute -top-12 -right-12 h-48 w-48 rounded-full bg-white/10"></div>
-        <div class="absolute -bottom-16 -left-10 h-48 w-48 rounded-full bg-white/10"></div>
-        <div class="relative flex items-center gap-5">
-          <div class="h-20 w-20 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-white text-3xl font-extrabold shrink-0 shadow-lg">
-            ${initial}
-          </div>
-          <div class="min-w-0">
-            <p class="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-white/80 mb-1.5">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICONS[sector.icon]}</svg>
-              ${sector.name} \u00b7 Sponsor Booth
-            </p>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight truncate">${displayName}</h1>
-            <p class="text-white/85 text-sm font-semibold mt-0.5">${role}</p>
-          </div>
+  document.getElementById('booth-strip').innerHTML = `
+    <div class="rounded-2xl overflow-hidden shadow-card fade-in-up">
+      <div class="flex items-center gap-3 px-5 py-4 bg-gradient-to-br ${sector.hue}">
+        <div class="h-11 w-11 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white text-lg font-extrabold shrink-0">${initial}</div>
+        <div class="min-w-0">
+          <p class="text-[10px] font-extrabold uppercase tracking-wider text-white/75 flex items-center gap-1.5">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[sector.icon]}</svg>
+            ${sector.name} \u00b7 Sponsor Booth
+          </p>
+          <h1 class="text-lg font-extrabold text-white truncate">${displayName}</h1>
         </div>
-      </div>
-      <div class="bg-white px-6 sm:px-10 py-6">
-        <p class="text-sm text-neutral5 leading-relaxed">${bio}</p>
-        ${sponsor && sponsor.careers ? renderCareersStrip(sponsor.careers) : ''}
       </div>
     </div>`;
 }
 
-function renderCareersStrip(careers) {
+/* ---------------------------------------------------------------------
+   LEFT PANE — video, bio, quick facts, careers
+   --------------------------------------------------------------------- */
+function sponsorVideoBlock(sponsor, sector) {
+  const localSrc = sponsor.videoSrc || sector.fallbackVideo;
+  const isFallback = !sponsor.videoSrc && !sponsor.youtubeId && !!sector.fallbackVideo;
+
+  if (sponsor.youtubeId) {
+    return `
+      <div class="relative w-full rounded-xl overflow-hidden bg-black aspect-video">
+        <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${sponsor.youtubeId}" title="${sponsor.name} video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>`;
+  }
+
   return `
-    <div class="mt-5">
-      <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4 mb-2">Explore Related Careers</p>
-      <div class="flex gap-2.5 overflow-x-auto pb-1 -mx-1 px-1">
+    <div class="relative w-full max-w-[240px] mx-auto aspect-[9/16] rounded-2xl overflow-hidden bg-black border border-neutral2">
+      <video class="absolute inset-0 w-full h-full object-cover" src="${localSrc}" controls controlsList="nodownload noremoteplayback" disablePictureInPicture playsinline preload="metadata">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <p class="text-center text-[11px] text-neutral4 mt-2">${sponsor.videoCaption || (isFallback ? `General ${sector.name} careers preview` : 'Featured video')}</p>`;
+}
+
+function renderQuickFacts(sector) {
+  return `
+    <div class="bg-white rounded-2xl border border-neutral2 shadow-card p-5 fade-in-up">
+      <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4 mb-3">Quick Facts</p>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div class="bg-brandOffWhite border border-neutral2 rounded-xl p-3.5">
+          <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4">Earning Potential</p>
+          <p class="text-sm font-extrabold text-brandBlue mt-1">${sector.earningPotential}</p>
+        </div>
+        <div class="bg-brandOffWhite border border-neutral2 rounded-xl p-3.5">
+          <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4">Canada Outlook</p>
+          <p class="text-xs font-bold text-neutral6 mt-1 leading-snug">${sector.marketOutlook}</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderCareersList(careers) {
+  return `
+    <div class="bg-white rounded-2xl border border-neutral2 shadow-card p-5 fade-in-up">
+      <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4 mb-3">Careers to Explore</p>
+      <div class="space-y-2.5">
         ${careers.map(c => `
-          <div class="shrink-0 w-[200px] bg-neutral1 border border-neutral2 rounded-xl p-3.5">
-            <p class="text-xs font-extrabold text-neutral6 leading-snug mb-1">${c.title}</p>
-            <p class="text-[11px] text-neutral5 leading-relaxed">${c.description}</p>
+          <div class="flex gap-3 px-3.5 py-3 rounded-xl bg-brandOffWhite border border-neutral2">
+            <span class="h-6 w-6 rounded-full bg-brandLightBlue flex items-center justify-center text-brandBlue shrink-0 mt-0.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+            <div>
+              <p class="text-sm font-extrabold text-neutral6">${c.title}</p>
+              <p class="text-xs text-neutral5 leading-relaxed mt-0.5">${c.description}</p>
+            </div>
           </div>`).join('')}
       </div>
     </div>`;
 }
 
-/* ---------------------------------------------------------------------
-   TIER 1 — QUICK GLANCE (massive, light, ~5-minute sector snapshot)
-   --------------------------------------------------------------------- */
-function renderTier1(sector, sponsor) {
-  document.getElementById('tier1-content').innerHTML = `
-    <div class="bg-gradient-to-br from-brandBlue via-sky-500 to-brandLightBlue py-14 px-6">
-      <div class="max-w-[900px] mx-auto text-white fade-in-up">
-        <div class="flex items-center gap-3 mb-5">
-          <span class="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center shrink-0">${ICON_LIGHTNING}</span>
-          <span class="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-white text-[11px] font-extrabold px-3 py-1.5 rounded-full">
-            \u23f1\ufe0f Tier 1 Activity \u00b7 5 Mins
-          </span>
-        </div>
-        <h2 class="text-3xl sm:text-4xl font-extrabold mb-2">Quick Glance</h2>
-        <p class="text-white/90 text-base leading-relaxed max-w-xl mb-8">${sector.tagline}</p>
+function renderLeftPane(sector, sponsor) {
+  const bio = sponsor ? sponsor.bio : `No employer partner has claimed this booth yet. In the meantime, explore what a career in ${sector.name} actually looks like.`;
+  const careers = (sponsor && sponsor.careers) ? sponsor.careers : sector.careers;
 
-        <div class="grid sm:grid-cols-2 gap-4 mb-8">
-          <div class="bg-white/15 backdrop-blur border border-white/20 rounded-2xl p-5">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-white/70 mb-1">Earning Potential</p>
-            <p class="text-xl font-extrabold text-white">${sector.earningPotential}</p>
-          </div>
-          <div class="bg-white/15 backdrop-blur border border-white/20 rounded-2xl p-5">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-white/70 mb-1">Ontario Outlook</p>
-            <p class="text-sm font-bold text-white leading-snug">${sector.marketOutlook}</p>
-          </div>
-        </div>
-
-        <p class="text-xs font-bold uppercase tracking-wider text-white/70 mb-2">Top Careers to Explore</p>
-        <div class="space-y-2.5">
-          ${sector.careers.map(c => `
-            <div class="flex gap-3 px-4 py-3.5 rounded-xl bg-white/95">
-              <span class="h-7 w-7 rounded-full bg-brandLightBlue flex items-center justify-center text-brandBlue shrink-0 mt-0.5">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-              </span>
-              <div>
-                <p class="text-sm font-extrabold text-neutral6">${c.title}</p>
-                <p class="text-xs text-neutral5 leading-relaxed mt-0.5">${c.description}</p>
-              </div>
-            </div>`).join('')}
-        </div>
-      </div>
-    </div>`;
+  document.getElementById('booth-left-pane').innerHTML = `
+    <div class="bg-white rounded-2xl border border-neutral2 shadow-card p-5 fade-in-up">
+      ${sponsor ? sponsorVideoBlock(sponsor, sector) : ''}
+      <p class="text-sm text-neutral5 leading-relaxed ${sponsor ? 'mt-4' : ''}">${bio}</p>
+    </div>
+    ${renderQuickFacts(sector)}
+    ${renderCareersList(careers)}
+  `;
 }
 
 /* ---------------------------------------------------------------------
-   TIER 2 — IN-DEPTH EXPLORATION (massive, dark, milestone quiz +
-   browser-generated certificate). Falls back to a "coming soon" state
-   when the resolved sponsor has no `.quiz` yet.
+   RIGHT PANE — Tier 1 Career Matcher Quiz + Tier 2 Challenge Form
    --------------------------------------------------------------------- */
-let quizSponsorName = null;
-let quizGame = null;
-let quizStepIndex = 0;
-let quizStage = 'step'; // 'step' | 'reward'
-let matcherShuffled = [];
-let matcherSelectedCareer = null;
-let matcherMatched = [];
-let tier2Body = null;
-let tier2ProgressWrap = null;
-
-function shuffleArray(arr) {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
-function renderTier2(sector, sponsor) {
-  document.getElementById('tier2-content').innerHTML = `
-    <div class="bg-gradient-to-br from-brandNavy via-violet-800 to-fuchsia-700 py-14 px-6">
-      <div class="max-w-[900px] mx-auto fade-in-up">
-        <div class="flex items-center gap-3 mb-5">
-          <span class="h-12 w-12 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-amber-300 shrink-0">${ICON_TROPHY}</span>
-          <span class="inline-flex items-center gap-1 bg-white/15 backdrop-blur text-white text-[11px] font-extrabold px-3 py-1.5 rounded-full">
-            \ud83c\udfc6 Tier 2 Activity \u00b7 Earn Credentials
-          </span>
-        </div>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-2">In-Depth Exploration</h2>
-        <p class="text-fuchsia-100 text-base leading-relaxed max-w-xl mb-8">Learn, explore, and earn sector credentials \u2014 the full SHSM and GLC2O-aligned pathway.</p>
-
-        <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
-          <div id="tier2-progress-wrap" class="mb-5 max-w-2xl mx-auto"></div>
-          <div id="tier2-body" class="max-w-2xl mx-auto"></div>
-        </div>
+function renderComingSoonCard(tierLabel, title, who) {
+  return `
+    <div class="bg-white rounded-2xl border border-neutral2 shadow-card p-5 text-center py-8 fade-in-up">
+      <div class="h-11 w-11 rounded-full bg-brandLightBlue flex items-center justify-center mb-3 mx-auto text-brandBlue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
       </div>
-    </div>`;
-
-  tier2ProgressWrap = document.getElementById('tier2-progress-wrap');
-  tier2Body = document.getElementById('tier2-body');
-
-  if (sponsor && sponsor.quiz) {
-    openQuizModal(sponsor);
-  } else {
-    renderComingSoon(sector, sponsor);
-  }
-}
-
-function renderComingSoon(sector, sponsor) {
-  tier2ProgressWrap.innerHTML = '';
-  const who = sponsor ? sponsor.name : `${sector.name}`;
-  tier2Body.innerHTML = `
-    <div class="text-center py-10 pop-in">
-      <div class="h-14 w-14 rounded-full bg-brandLightBlue flex items-center justify-center mb-4 mx-auto">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brandBlue"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-      </div>
-      <h3 class="text-lg font-extrabold text-neutral6">This milestone quiz is under construction</h3>
-      <p class="text-sm text-neutral5 mt-1.5 max-w-sm mx-auto">We're still building the interactive experience for <span class="font-semibold text-neutral6">${who}</span>. Try the Women in Nuclear Canada booth (Green Energy sector) to see it in action!</p>
-      <a href="sector.html" class="inline-block mt-6 text-sm font-bold text-brandBlue bg-brandLightBlue hover:bg-brandLightBlue/70 px-5 py-2.5 rounded-full transition">Back to Sector Spotlight</a>
+      <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4 mb-1">${tierLabel}</p>
+      <h3 class="text-sm font-extrabold text-neutral6">${title}</h3>
+      <p class="text-xs text-neutral5 mt-1">We're still building this activity for ${who}.</p>
     </div>`;
 }
 
-function openQuizModal(sponsor) {
-  quizSponsorName = sponsor.name;
-  quizGame = sponsor.quiz || null;
-  quizStepIndex = 0;
-  quizStage = 'step';
-  matcherShuffled = [];
-  matcherSelectedCareer = null;
-  matcherMatched = [];
+function renderRightPane(sector, sponsor) {
+  const isWin = sponsor && sponsor.trackId === 'win';
+  const who = sponsor ? sponsor.name : sector.name;
 
-  renderQuizContent();
-}
+  if (isWin) currentSponsorCareers = sponsor.careers || [];
 
-function renderProgressBar(totalSteps, currentIndex) {
-  tier2ProgressWrap.innerHTML = `
-    <p class="text-[11px] font-bold text-neutral4 uppercase tracking-wider mb-2">Step ${currentIndex + 1} of ${totalSteps}</p>
-    <div class="quiz-progress-track" style="--tw-bg-opacity:1;">
-      ${Array.from({ length: totalSteps }).map((_, i) => `
-        <div class="flex-1 h-1.5 rounded-full bg-neutral1 overflow-hidden">
-          <div class="h-full rounded-full bg-brandBlue transition-all duration-300" style="width: ${i < currentIndex ? '100' : (i === currentIndex ? '50' : '0')}%;"></div>
+  const tier1Html = isWin
+    ? `<div id="tier1-card" class="bg-white rounded-2xl border border-neutral2 shadow-card p-5 fade-in-up">
+        <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4 mb-1">Tier 1 \u00b7 2-Minute Challenge</p>
+        <h3 class="text-lg font-extrabold text-neutral6 mb-1">\ud83c\udf1f Which Nuclear Career Are You?</h3>
+        <p class="text-xs text-neutral5 leading-relaxed mb-4">Answer 5 quick questions to find out which real Women in Nuclear career fits you best.</p>
+        <div id="career-quiz-root">
+          <button id="career-quiz-start-btn" class="w-full bg-brandBlue hover:bg-brandNavy text-white text-sm font-extrabold py-3 rounded-xl transition">Start Quiz</button>
         </div>
-      `).join('')}
-    </div>`;
-}
+      </div>`
+    : `<div id="tier1-card">${renderComingSoonCard('Tier 1', 'Quick Challenge', who)}</div>`;
 
-function renderQuizContent() {
-  const game = quizGame;
+  const tier2Html = isWin
+    ? `<div id="tier2-card" class="bg-white rounded-2xl border border-neutral2 shadow-card p-5 fade-in-up">
+        <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4 mb-1">Tier 2 \u00b7 Creative Challenge</p>
+        <h3 class="text-lg font-extrabold text-neutral6 mb-3">Accept a WiN Challenge</h3>
+        <label class="text-xs font-bold text-neutral5 mb-1.5 block">Which WiN Challenge would you like to accept?</label>
+        <select id="challenge-select" class="w-full rounded-xl border border-neutral2 px-3 py-2.5 text-sm font-semibold text-neutral6 focus:outline-none focus:ring-2 focus:ring-brandBlue">
+          <option value="">Choose a challenge...</option>
+          <option value="townhall">\ud83c\udfdb\ufe0f Town Hall Pitch</option>
+          <option value="pathway">\ud83d\uddfa\ufe0f Pathway Plan</option>
+        </select>
+        <div id="challenge-prompt-wrap" class="mt-3"></div>
+      </div>`
+    : `<div id="tier2-card">${renderComingSoonCard('Tier 2', 'Creative Challenge', who)}</div>`;
 
-  if (!game) {
-    tier2ProgressWrap.innerHTML = '';
-    tier2Body.innerHTML = `
-      <div class="text-center py-6 pop-in">
-        <div class="h-14 w-14 rounded-full bg-brandLightBlue flex items-center justify-center mb-4 mx-auto">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brandBlue"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-        </div>
-        <h3 class="text-lg font-extrabold text-neutral6">This mini-game is under construction</h3>
-        <p class="text-sm text-neutral5 mt-1.5 max-w-sm mx-auto">We're still building the interactive quiz for <span class="font-semibold text-neutral6">${quizSponsorName}</span>.</p>
-      </div>`;
-    return;
-  }
+  document.getElementById('booth-right-pane').innerHTML = tier1Html + tier2Html;
 
-  if (quizStage === 'step') {
-    renderProgressBar(game.steps.length, quizStepIndex);
-    const step = game.steps[quizStepIndex];
-    if (step.type === 'mcq') renderMCQStep(step);
-    else if (step.type === 'matcher') renderMatcherStep(step);
-  } else if (quizStage === 'reward') {
-    tier2ProgressWrap.innerHTML = `
-      <div class="flex items-center gap-2 text-emerald-600 text-xs font-bold uppercase tracking-wider mb-2">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-        All 3 steps complete
-      </div>
-      <div class="quiz-progress-track">
-        ${game.steps.map(() => `<div class="flex-1 h-1.5 rounded-full bg-emerald-500"></div>`).join('')}
-      </div>`;
-    renderRewardScreen(game);
+  if (isWin) {
+    document.getElementById('career-quiz-start-btn').addEventListener('click', startCareerQuiz);
+    document.getElementById('challenge-select').addEventListener('change', (e) => renderChallengePrompt(e.target.value));
   }
 }
 
-function renderMCQStep(step) {
-  tier2Body.innerHTML = `
+/* =========================================================================
+   TIER 1 — "WHICH NUCLEAR CAREER ARE YOU?" (Women in Nuclear Canada)
+   A 5-question, tap-only personality quiz (no typing, no timer). Each
+   answer awards points toward one or more of WiN's 4 real careers;
+   whichever career scores highest at the end is revealed as the match.
+   Career titles/descriptions are pulled live from sponsor.careers in
+   sponsorData.js (currentSponsorCareers) rather than duplicated here,
+   so this stays in sync if that content ever changes.
+   ========================================================================= */
+let currentSponsorCareers = [];
+let careerQuizScores = {};
+let careerQuizStepIndex = 0;
+
+const CAREER_QUIZ_QUESTIONS = [
+  {
+    prompt: 'Which excites you more?',
+    options: [
+      { text: 'Working with machines, systems, and technology', points: { 'Nuclear Operator-in-Training (NOIT)': 1, 'Instrument & Control (I&C) Tech': 1 } },
+      { text: 'Helping keep people safe and healthy', points: { 'Radiation Safety Technician': 1, 'Medical Isotope Specialist': 1 } }
+    ]
+  },
+  {
+    prompt: 'When you imagine "working with technology," what appeals more?',
+    options: [
+      { text: 'Watching live data and making real-time calls', points: { 'Nuclear Operator-in-Training (NOIT)': 2 } },
+      { text: 'Taking things apart, fixing, and calibrating them', points: { 'Instrument & Control (I&C) Tech': 2 } }
+    ]
+  },
+  {
+    prompt: 'When you imagine "helping keep people safe," what appeals more?',
+    options: [
+      { text: 'Following procedures and inspecting for hazards', points: { 'Radiation Safety Technician': 2 } },
+      { text: 'Using science to directly treat patients', points: { 'Medical Isotope Specialist': 2 } }
+    ]
+  },
+  {
+    prompt: 'Pick a work style:',
+    options: [
+      { text: '\u26a1 Fast-paced, always monitoring something', points: { 'Nuclear Operator-in-Training (NOIT)': 1 } },
+      { text: '\ud83d\udd0d Detail-oriented and methodical', points: { 'Radiation Safety Technician': 1 } },
+      { text: '\ud83d\udd27 Hands-on with tools and machines', points: { 'Instrument & Control (I&C) Tech': 1 } },
+      { text: '\ud83d\udd2c Precise, science-driven work', points: { 'Medical Isotope Specialist': 1 } }
+    ]
+  },
+  {
+    prompt: 'If you had to pick one task for your dream job, which sounds best?',
+    options: [
+      { text: 'Keep a power plant running safely, 24/7', points: { 'Nuclear Operator-in-Training (NOIT)': 1 } },
+      { text: 'Patrol facilities with a safety scanner', points: { 'Radiation Safety Technician': 1 } },
+      { text: 'Wire up and test high-tech sensors', points: { 'Instrument & Control (I&C) Tech': 1 } },
+      { text: 'Package life-saving medicine for hospitals', points: { 'Medical Isotope Specialist': 1 } }
+    ]
+  }
+];
+
+function startCareerQuiz() {
+  careerQuizScores = {};
+  careerQuizStepIndex = 0;
+  renderCareerQuizQuestion();
+}
+
+function renderCareerQuizQuestion() {
+  const root = document.getElementById('career-quiz-root');
+  const total = CAREER_QUIZ_QUESTIONS.length;
+  const q = CAREER_QUIZ_QUESTIONS[careerQuizStepIndex];
+
+  root.innerHTML = `
     <div class="pop-in">
-      <p class="text-xs font-bold text-brandBlue bg-brandLightBlue inline-block px-2.5 py-1 rounded-full mb-3">${step.eyebrow}</p>
-      <h3 class="text-lg font-extrabold text-neutral6 leading-snug">${step.prompt}</h3>
-      <div id="mcq-options" class="mt-5 space-y-2">
-        ${step.options.map((opt, i) => `
-          <button class="mcq-option w-full text-left px-4 py-3 rounded-xl border border-neutral2 hover:border-brandBlue/50 hover:bg-brandLightBlue/40 transition text-sm font-medium text-neutral6" data-index="${i}">
-            <span class="font-bold text-neutral4 mr-2">${String.fromCharCode(65 + i)})</span>${opt}
+      <p class="text-[11px] font-bold text-neutral4 uppercase tracking-wider mb-2">Question ${careerQuizStepIndex + 1} of ${total}</p>
+      <div class="flex gap-1.5 mb-4">
+        ${Array.from({ length: total }).map((_, i) => `<div class="flex-1 h-1.5 rounded-full ${i <= careerQuizStepIndex ? 'bg-brandBlue' : 'bg-neutral1'}"></div>`).join('')}
+      </div>
+      <h4 class="text-sm font-extrabold text-neutral6 mb-3">${q.prompt}</h4>
+      <div class="space-y-2">
+        ${q.options.map((opt, i) => `
+          <button class="career-quiz-option w-full text-left px-4 py-3 rounded-xl border border-neutral2 hover:border-brandBlue/50 hover:bg-brandLightBlue/40 transition text-sm font-medium text-neutral6" data-index="${i}">
+            ${opt.text}
           </button>`).join('')}
       </div>
-      <div id="mcq-feedback" class="mt-4"></div>
     </div>`;
 
-  tier2Body.querySelectorAll('.mcq-option').forEach(btn => {
-    btn.addEventListener('click', () => handleMCQAnswer(step, parseInt(btn.dataset.index, 10), btn));
+  root.querySelectorAll('.career-quiz-option').forEach(btn => {
+    btn.addEventListener('click', () => handleCareerQuizAnswer(q, parseInt(btn.dataset.index, 10)));
   });
 }
 
-function handleMCQAnswer(step, index, btnEl) {
-  const feedback = document.getElementById('mcq-feedback');
-  const allOptions = tier2Body.querySelectorAll('.mcq-option');
+function handleCareerQuizAnswer(question, optionIndex) {
+  const chosen = question.options[optionIndex];
+  Object.entries(chosen.points).forEach(([career, pts]) => {
+    careerQuizScores[career] = (careerQuizScores[career] || 0) + pts;
+  });
 
-  if (index === step.correctIndex) {
-    allOptions.forEach(b => b.classList.add('pointer-events-none', 'opacity-60'));
-    btnEl.classList.remove('opacity-60', 'border-neutral2');
-    btnEl.classList.add('border-emerald-400', 'bg-emerald-50', 'text-emerald-700');
-
-    feedback.innerHTML = `
-      <div class="flex items-start gap-2.5 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 pop-in">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600 shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
-        <p class="text-sm text-emerald-800 leading-snug">${step.correctFeedback}</p>
-      </div>
-      <button id="mcq-continue-btn" class="mt-4 w-full bg-brandBlue hover:bg-brandNavy text-white text-sm font-bold py-3 rounded-xl shadow-sm shadow-brandBlue/20 transition">
-        Continue
-      </button>`;
-
-    document.getElementById('mcq-continue-btn').addEventListener('click', () => {
-      quizStepIndex += 1;
-      renderQuizContent();
-    });
+  careerQuizStepIndex += 1;
+  if (careerQuizStepIndex >= CAREER_QUIZ_QUESTIONS.length) {
+    renderCareerQuizResult();
   } else {
-    btnEl.classList.add('shake', 'border-rose-300', 'bg-rose-50');
-    setTimeout(() => btnEl.classList.remove('shake'), 400);
-    feedback.innerHTML = `
-      <div class="flex items-start gap-2.5 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 pop-in">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-        <p class="text-sm text-amber-800 leading-snug">${step.wrongFeedback}</p>
-      </div>`;
+    renderCareerQuizQuestion();
   }
 }
 
-function renderMatcherStep(step) {
-  if (matcherShuffled.length === 0) {
-    matcherShuffled = shuffleArray(step.careers.map(c => step.descriptions[c]));
-  }
-
-  tier2Body.innerHTML = `
-    <div class="pop-in">
-      <p class="text-xs font-bold text-brandBlue bg-brandLightBlue inline-block px-2.5 py-1 rounded-full mb-3">${step.eyebrow}</p>
-      <h3 class="text-lg font-extrabold text-neutral6 leading-snug">${step.prompt}</h3>
-
-      <div class="grid grid-cols-2 gap-3 mt-5">
-        <div class="space-y-2">
-          ${step.careers.map(career => {
-            const isMatched = matcherMatched.includes(career);
-            const isSelected = matcherSelectedCareer === career;
-            return `
-              <button
-                class="matcher-career w-full text-left px-3 py-3 rounded-xl border text-sm font-semibold transition
-                  ${isMatched ? 'border-emerald-300 bg-emerald-50 text-emerald-700 pointer-events-none' : isSelected ? 'border-brandBlue bg-brandLightBlue text-brandBlue ring-2 ring-brandBlue/30' : 'border-neutral2 hover:border-brandBlue/50 hover:bg-brandLightBlue/40 text-neutral6'}"
-                data-career="${career}">
-                ${career} ${isMatched ? '\u2713' : ''}
-              </button>`;
-          }).join('')}
-        </div>
-        <div class="space-y-2">
-          ${matcherShuffled.map(desc => {
-            const isMatched = matcherMatched.some(c => step.descriptions[c] === desc);
-            return `
-              <button
-                class="matcher-desc w-full text-left px-3 py-3 rounded-xl border text-sm font-medium transition
-                  ${isMatched ? 'border-emerald-300 bg-emerald-50 text-emerald-700 pointer-events-none' : 'border-neutral2 hover:border-brandBlue/50 hover:bg-brandLightBlue/40 text-neutral5'}"
-                data-desc="${desc}">
-                ${desc} ${isMatched ? '\u2713' : ''}
-              </button>`;
-          }).join('')}
-        </div>
-      </div>
-
-      <div id="matcher-feedback" class="mt-4"></div>
-      <div id="matcher-continue-wrap" class="mt-2"></div>
-    </div>`;
-
-  tier2Body.querySelectorAll('.matcher-career').forEach(btn => {
-    btn.addEventListener('click', () => {
-      matcherSelectedCareer = matcherSelectedCareer === btn.dataset.career ? null : btn.dataset.career;
-      renderMatcherStep(step);
-    });
+function renderCareerQuizResult() {
+  // Fixed order just breaks ties deterministically — first-highest wins.
+  const CAREER_ORDER = [
+    'Nuclear Operator-in-Training (NOIT)',
+    'Radiation Safety Technician',
+    'Medical Isotope Specialist',
+    'Instrument & Control (I&C) Tech'
+  ];
+  let bestCareer = CAREER_ORDER[0];
+  let bestScore = -1;
+  CAREER_ORDER.forEach(career => {
+    const score = careerQuizScores[career] || 0;
+    if (score > bestScore) { bestScore = score; bestCareer = career; }
   });
 
-  tier2Body.querySelectorAll('.matcher-desc').forEach(btn => {
-    btn.addEventListener('click', () => handleMatcherDescClick(step, btn));
-  });
+  const careerInfo = currentSponsorCareers.find(c => c.title === bestCareer) || { title: bestCareer, description: '' };
 
-  if (matcherMatched.length === step.careers.length) {
-    document.getElementById('matcher-continue-wrap').innerHTML = `
-      <button id="matcher-continue-btn" class="w-full bg-brandBlue hover:bg-brandNavy text-white text-sm font-bold py-3 rounded-xl shadow-sm shadow-brandBlue/20 transition pop-in">
-        Continue to Your Certificate
-      </button>`;
-    document.getElementById('matcher-continue-btn').addEventListener('click', () => {
-      quizStage = 'reward';
-      renderQuizContent();
-    });
-  }
-}
-
-function handleMatcherDescClick(step, btnEl) {
-  const feedback = document.getElementById('matcher-feedback');
-
-  if (!matcherSelectedCareer) {
-    feedback.innerHTML = `<p class="text-xs font-semibold text-neutral4">Select a career on the left first.</p>`;
-    return;
-  }
-
-  const desc = btnEl.dataset.desc;
-  if (step.descriptions[matcherSelectedCareer] === desc) {
-    matcherMatched.push(matcherSelectedCareer);
-    matcherSelectedCareer = null;
-    feedback.innerHTML = `<p class="text-xs font-bold text-emerald-600">Nice match!</p>`;
-    renderMatcherStep(step);
-  } else {
-    btnEl.classList.add('shake', 'border-rose-300', 'bg-rose-50');
-    setTimeout(() => btnEl.classList.remove('shake', 'border-rose-300', 'bg-rose-50'), 400);
-    feedback.innerHTML = `<p class="text-xs font-semibold text-amber-600">Not quite a match \u2014 try again.</p>`;
-    matcherSelectedCareer = null;
-    renderMatcherStep(step);
-  }
-}
-
-function renderRewardScreen(game) {
-  tier2Body.innerHTML = `
+  document.getElementById('career-quiz-root').innerHTML = `
     <div class="text-center pop-in">
-      <div class="h-14 w-14 rounded-full bg-emerald-100 flex items-center justify-center mb-4 mx-auto">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M20 6 9 17l-5-5"/></svg>
-      </div>
-      <h3 class="text-lg font-extrabold text-neutral6">You've earned the ${game.badge} badge!</h3>
-      <p class="text-sm text-neutral5 mt-1.5 max-w-sm mx-auto">Type your name to generate your custom certificate.</p>
+      <div class="text-3xl mb-2">\ud83c\udf1f</div>
+      <p class="text-[11px] font-bold text-brandBlue uppercase tracking-wider mb-1">Your Nuclear Career Match</p>
+      <h4 class="text-lg font-extrabold text-neutral6 mb-2">${careerInfo.title}</h4>
+      <p class="text-xs text-neutral5 leading-relaxed mb-5">${careerInfo.description}</p>
+      <a href="https://www.myblueprint.ca/" target="_blank" rel="noopener noreferrer" class="block w-full bg-brandBlue hover:bg-brandNavy text-white text-sm font-extrabold py-3 rounded-xl transition mb-2">Explore This Career on myBlueprint</a>
+      <button id="career-quiz-retry-btn" class="text-xs font-bold text-neutral4 hover:text-brandBlue transition">Try again</button>
+    </div>`;
 
-      <div class="mt-5 flex flex-col sm:flex-row gap-2 max-w-sm mx-auto">
-        <input id="cert-name-input" type="text" placeholder="Your full name" maxlength="40"
-          class="flex-1 rounded-xl border border-neutral2 px-4 py-3 text-sm text-neutral6 placeholder:text-neutral4 focus:outline-none focus:ring-2 focus:ring-brandBlue focus:border-transparent">
-        <button id="cert-generate-btn" class="bg-brandBlue hover:bg-brandNavy text-white text-sm font-bold px-5 py-3 rounded-xl shadow-sm shadow-brandBlue/20 transition shrink-0">
-          Generate
-        </button>
-      </div>
-      <p id="cert-name-error" class="text-xs font-semibold text-rose-500 mt-2 hidden">Please enter your name first!</p>
-    </div>
-
-    <div id="cert-output" class="mt-6"></div>`;
-
-  document.getElementById('cert-generate-btn').addEventListener('click', () => generateCertificate(game));
-  document.getElementById('cert-name-input').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') generateCertificate(game);
-  });
+  document.getElementById('career-quiz-retry-btn').addEventListener('click', startCareerQuiz);
 }
 
-function generateCertificate(game) {
-  const input = document.getElementById('cert-name-input');
-  const errorEl = document.getElementById('cert-name-error');
-  const name = input.value.trim();
+/* =========================================================================
+   TIER 2 — "ACCEPT A WIN CHALLENGE" (single-step, AI-resistant form)
+   No PII is ever handled by this script: the written answer is never
+   sent anywhere by our JS (only discarded client-side on submit), and
+   the prize-draw email is collected entirely on Formspree's own page —
+   we only link out to it.
+   ========================================================================= */
+const CHALLENGE_PROMPTS = {
+  townhall: {
+    prompt: 'Your city is voting on installing a Small Modular Reactor (SMR). Write a 3-sentence opening statement for the town hall meeting. Use at least one fact from the WiN video to support the benefits, and name and address one common concern.',
+    placeholder: 'Type your opening statement...'
+  },
+  pathway: {
+    prompt: "Pick a nuclear energy occupation from the bios on the left. Tell us the job title, list the important skills required, explain why you're interested in it, and list two specific high school courses you could add to your myBlueprint plan next year to prepare for that career.",
+    placeholder: 'Type your pathway plan...'
+  }
+};
 
-  if (!name) {
+function renderChallengePrompt(key) {
+  const wrap = document.getElementById('challenge-prompt-wrap');
+  if (!key) { wrap.innerHTML = ''; return; }
+
+  const challenge = CHALLENGE_PROMPTS[key];
+  wrap.innerHTML = `
+    <div class="pop-in">
+      <p class="text-xs text-neutral5 leading-relaxed bg-brandOffWhite border border-neutral2 rounded-xl p-3 mb-3">${challenge.prompt}</p>
+      <textarea id="challenge-answer" rows="5" placeholder="${challenge.placeholder}" class="w-full rounded-xl border border-neutral2 px-3 py-2.5 text-sm text-neutral6 placeholder:text-neutral4 focus:outline-none focus:ring-2 focus:ring-brandBlue resize-none"></textarea>
+      <p id="challenge-error" class="text-xs font-semibold text-rose-500 mt-1.5 hidden">Write a bit more before submitting \u2014 aim for a few real sentences!</p>
+      <button id="challenge-submit-btn" class="mt-3 w-full bg-brandNavy hover:bg-brandBlue text-white text-sm font-extrabold py-3 rounded-xl transition">Submit Challenge</button>
+    </div>`;
+
+  document.getElementById('challenge-submit-btn').addEventListener('click', () => submitChallenge(key));
+}
+
+function submitChallenge(challengeKey) {
+  const textarea = document.getElementById('challenge-answer');
+  const errorEl = document.getElementById('challenge-error');
+  const answer = textarea.value.trim();
+
+  if (answer.length < 30) {
     errorEl.classList.remove('hidden');
-    input.classList.add('shake', 'border-rose-300');
-    setTimeout(() => input.classList.remove('shake'), 400);
+    textarea.classList.add('shake');
+    setTimeout(() => textarea.classList.remove('shake'), 400);
     return;
   }
   errorEl.classList.add('hidden');
 
-  const today = new Date().toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' });
+  // Only which challenge was completed is logged — never the written
+  // answer itself. No PII, no free-text content leaves the browser.
+  console.log('%c[CareerPulse] WiN challenge submitted', 'color:#0092FF;font-weight:bold;', { challenge: challengeKey });
 
-  document.getElementById('cert-output').innerHTML = `
-    <div class="relative rounded-2xl border-2 border-brandLightBlue bg-gradient-to-br from-brandLightBlue/40 via-white to-white p-6 sm:p-8 pop-in overflow-hidden">
-      <div class="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-brandLightBlue/60"></div>
-      <div class="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-brandLightBlue/40"></div>
-      <div class="relative text-center">
-        <div class="flex items-center justify-center gap-2 mb-4">
-          <div class="h-8 w-8 rounded-lg bg-brandBlue flex items-center justify-center shadow-sm">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
-          </div>
-          <p class="text-xs font-extrabold tracking-wide text-neutral5">CareerPulse Ontario</p>
-        </div>
-        <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-brandBlue">Certificate of Completion</p>
-        <p class="text-sm text-neutral5 mt-4 italic">This certifies that</p>
-        <p class="text-2xl sm:text-3xl font-extrabold text-neutral6 mt-1 mb-2" style="font-family: Georgia, serif;">${name}</p>
-        <p class="text-sm text-neutral5 max-w-sm mx-auto leading-relaxed">has completed the <span class="font-semibold">${quizSponsorName}</span> Spotlight and earned the</p>
-        <p class="inline-block mt-3 text-xs font-extrabold text-brandNavy bg-brandLightBlue px-4 py-1.5 rounded-full">${game.badge} Badge</p>
-        <p class="text-[11px] text-neutral4 mt-5">${today} \u00b7 National Career Development Month</p>
-      </div>
-    </div>
+  document.getElementById('challenge-prompt-wrap').innerHTML = `
+    <div class="text-center py-4 pop-in">
+      <div class="text-3xl mb-2">\ud83c\udf89</div>
+      <h4 class="text-sm font-extrabold text-neutral6">Challenge submitted!</h4>
+      <p class="text-xs text-neutral5 mt-1 mb-4">Great work thinking like a real WiN professional.</p>
+      <a href="https://formspree.io/dummy" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-brandBlue hover:text-brandNavy transition">
+        Enter your email for the prize draw
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>`;
 
-    <button id="cert-download-btn" class="mt-4 w-full flex items-center justify-center gap-2 bg-brandNavy hover:bg-brandBlue text-white text-sm font-bold py-3 rounded-xl transition">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-      Download Certificate (PNG)
-    </button>
-    <p class="text-[11px] text-neutral4 text-center mt-3">Upload this file directly to your myBlueprint Portfolio to show off your new skills!</p>`;
-
-  document.getElementById('cert-download-btn').addEventListener('click', () => downloadCertificatePNG(name, game, today));
-}
-
-function downloadCertificatePNG(name, game, dateStr) {
-  const canvas = document.getElementById('cert-canvas');
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-
-  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
-  bgGrad.addColorStop(0, '#F6F6FF');
-  bgGrad.addColorStop(1, '#ffffff');
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, W, H);
-
-  ctx.strokeStyle = '#C6E7FF';
-  ctx.lineWidth = 6;
-  ctx.strokeRect(24, 24, W - 48, H - 48);
-  ctx.strokeStyle = '#0092FF';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(40, 40, W - 80, H - 80);
-
-  ctx.fillStyle = '#0092FF';
-  ctx.beginPath();
-  ctx.roundRect(W / 2 - 220, 90, 34, 34, 8);
-  ctx.fill();
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 18px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('\u26A1', W / 2 - 203, 114);
-
-  ctx.fillStyle = '#22224C';
-  ctx.font = 'bold 20px Arial';
-  ctx.textAlign = 'left';
-  ctx.fillText('CareerPulse Ontario', W / 2 - 175, 116);
-
-  ctx.fillStyle = '#0092FF';
-  ctx.font = 'bold 15px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('C E R T I F I C A T E   O F   C O M P L E T I O N', W / 2, 190);
-
-  ctx.fillStyle = '#485163';
-  ctx.font = 'italic 20px Georgia';
-  ctx.fillText('This certifies that', W / 2, 250);
-
-  let nameFontSize = 56;
-  ctx.font = `bold ${nameFontSize}px Georgia`;
-  while (ctx.measureText(name).width > W - 200 && nameFontSize > 24) {
-    nameFontSize -= 2;
-    ctx.font = `bold ${nameFontSize}px Georgia`;
-  }
-  ctx.fillStyle = '#252A33';
-  ctx.fillText(name, W / 2, 330);
-
-  ctx.fillStyle = '#485163';
-  ctx.font = '20px Arial';
-  ctx.fillText(`has completed the ${quizSponsorName} Spotlight`, W / 2, 400);
-  ctx.fillText('and earned the', W / 2, 428);
-
-  ctx.font = 'bold 20px Arial';
-  const badgeText = `${game.badge} Badge`;
-  const badgeWidth = ctx.measureText(badgeText).width + 60;
-  ctx.fillStyle = '#C6E7FF';
-  ctx.beginPath();
-  ctx.roundRect(W / 2 - badgeWidth / 2, 460, badgeWidth, 46, 23);
-  ctx.fill();
-  ctx.fillStyle = '#22224C';
-  ctx.fillText(badgeText, W / 2, 489);
-
-  ctx.fillStyle = '#AAB7CB';
-  ctx.font = '15px Arial';
-  ctx.fillText(`${dateStr} \u00b7 National Career Development Month`, W / 2, 720);
-  ctx.fillText('powered by myBlueprint', W / 2, 745);
-
-  const dataUrl = canvas.toDataURL('image/png');
-  const link = document.createElement('a');
-  const safeName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-  link.href = dataUrl;
-  link.download = `careerpulse-certificate-${safeName || 'student'}.png`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  console.log('%c[CareerPulse] Certificate generated', 'color:#0092FF;font-weight:bold;', {
-    sponsor: quizSponsorName,
-    studentName: name
-  });
+  document.getElementById('challenge-select').value = '';
 }
 
 /* ---------------------------------------------------------------------
-   INIT — resolve sponsor/sector from the URL, render the booth header
-   and both tiers, wire the back button, and auto-scroll to whichever
-   tier the ?action= param requests.
+   INIT — resolve sponsor/sector from the URL, render everything, and
+   scroll to the requested tier card within the (possibly sticky/
+   scrollable) right pane.
    --------------------------------------------------------------------- */
 (function init() {
   const params = new URLSearchParams(window.location.search);
@@ -708,29 +516,22 @@ function downloadCertificatePNG(name, game, dateStr) {
 
   if (sponsorParam) {
     const found = findSponsorByTrackId(sponsorParam);
-    if (found) {
-      sponsor = found.sponsor;
-      sector = found.sector;
-      sectorId = found.sectorId;
-    }
+    if (found) { sponsor = found.sponsor; sector = found.sector; sectorId = found.sectorId; }
   }
-
   if (!sector) {
     sectorId = (idParam && sponsorData[idParam]) ? idParam : pickRandomSectorId();
     sector = sponsorData[sectorId];
   }
 
-  // Both "Back to Sector Spotlight" links should return to the exact
-  // sector this booth belongs to, not a random one.
   const backUrl = `sector.html?id=${encodeURIComponent(sectorId)}`;
   document.querySelectorAll('a[href="sector.html"]').forEach(a => { a.href = backUrl; });
 
-  renderBoothHeader(sector, sponsor);
-  renderTier1(sector, sponsor);
-  renderTier2(sector, sponsor);
+  renderBoothStrip(sector, sponsor);
+  renderLeftPane(sector, sponsor);
+  renderRightPane(sector, sponsor);
 
   if (actionParam === 'tier1' || actionParam === 'tier2') {
-    const targetId = actionParam === 'tier1' ? 'tier1-section' : 'tier2-section';
+    const targetId = actionParam === 'tier1' ? 'tier1-card' : 'tier2-card';
     setTimeout(() => {
       const target = document.getElementById(targetId);
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });

@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<!-- CAREERPULSE BUILD MARKER: sector-html-v8-national-pivot-2026 — if you view
+     page source and DON'T see this exact line, your browser is loading a
+     different/cached sector.html than the one below. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -55,7 +58,9 @@
 <!-- ============ TOP NAVBAR (identical across the app) ============ -->
 <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral2">
   <div class="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
+    <div class="flex items-center gap-3">
+      <img src="images/myBlueprint logo.png" alt="myBlueprint" class="h-7 w-auto" onerror="this.style.display='none';" />
+      <div class="h-6 w-px bg-neutral2"></div>
       <div class="h-9 w-9 rounded-xl bg-brandBlue flex items-center justify-center shadow-sm">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
       </div>
@@ -89,7 +94,7 @@
 /* =========================================================================
    CAREERPULSE — SECTOR LANDING PAGE CONTROLLER
    "Sexy Sector Landing Page" model: every sector is a complete,
-   standalone Ontario LMI educational page. Sponsors are an optional
+   standalone national LMI educational page. Sponsors are an optional
    premium layer rendered in a right-hand "teaser" panel — never a
    requirement for the page to be valuable.
 
@@ -115,13 +120,10 @@
 const ICONS = {
   healthcare: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
   trades: '<path d="m14.7 6.3 3 3L7 20H4v-3z"/><path d="m17.7 3.3 3 3-2.5 2.5-3-3z"/>',
-  green: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 9.3 17 9.3S12.5 9 11 20z"/><path d="M11 20c0-6 3-9 8-9"/>',
   tech: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>',
-  manufacturing: '<path d="M2 20h20"/><path d="M4 20V10l5 4V10l5 4V10l5 4v6"/>',
-  agrifood: '<path d="M12 2c4 3 6 6 6 10a6 6 0 0 1-12 0c0-4 2-7 6-10z"/><path d="M12 12v10"/>',
-  aerospace: '<path d="m17.8 19.1 2-1L18 12l1.8-4.8a1.5 1.5 0 0 0-2.6-1.5L14 10l-6.5-2.2-1.4 1.4L11 12l-3 3H5l-1.5 1.5 3 1 1 3L9 19v-3l3-3 3.1 4.9z"/>',
-  logistics: '<rect x="1" y="7" width="15" height="10" rx="1"/><path d="M16 10h4l3 3v4h-7z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>',
-  tourism: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>'
+  business: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>',
+  education: '<path d="m22 10-10-5L2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/>',
+  green: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 9.3 17 9.3S12.5 9 11 20z"/><path d="M11 20c0-6 3-9 8-9"/>'
 };
 
 // ---- Placeholder analytics hook — wire this up to real tracking later ----
@@ -135,28 +137,12 @@ function pickRandomSectorId() {
 }
 
 /* ---------------------------------------------------------------------
-   HEADER — sector title, tagline, SHSM pathway badges, "Ontario
-   Outlook" growth badge. (This is the piece that keeps getting asked
-   about — renderShsmBadges is called from renderHeader below, and
-   sponsorData.js supplies 6 courses + shsmConnections per sector.)
+   HEADER — sector title, tagline, and a national "Canada Outlook"
+   growth badge. (The old Ontario SHSM pathway badges were removed as
+   part of the national pivot — SHSM is an Ontario-specific program and
+   has no national equivalent, so sponsorData.js no longer carries that
+   field at all.)
    --------------------------------------------------------------------- */
-function renderShsmBadges(sector) {
-  const connections = Array.isArray(sector.shsmConnections) ? sector.shsmConnections : [];
-  if (connections.length === 0) return '';
-
-  return `
-    <div class="mt-4">
-      <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4 mb-2">Eligible Ontario SHSM Pathways</p>
-      <div class="flex flex-wrap gap-2">
-        ${connections.map(name => `
-          <span class="inline-flex items-center gap-1.5 bg-brandNavy text-white text-xs font-bold pl-2.5 pr-3.5 py-1.5 rounded-full">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-            ${name}
-          </span>`).join('')}
-      </div>
-    </div>`;
-}
-
 function renderHeader(sector) {
   document.getElementById('sector-header').innerHTML = `
     <div class="fade-in-up">
@@ -168,14 +154,12 @@ function renderHeader(sector) {
       </div>
       <p class="text-neutral5 text-base md:text-lg leading-relaxed max-w-2xl">${sector.tagline}</p>
 
-      ${renderShsmBadges(sector)}
-
       <div class="inline-flex items-start gap-2.5 bg-white border border-neutral2 rounded-2xl pl-4 pr-5 py-3 shadow-card mt-5 max-w-xl">
         <span class="h-6 w-6 rounded-full bg-brandLightBlue flex items-center justify-center shrink-0 mt-0.5">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="text-brandBlue"><path d="m3 17 6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>
         </span>
         <div>
-          <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4">Ontario Outlook \u00b7 2026\u20132030</p>
+          <p class="text-[10px] font-bold uppercase tracking-wider text-neutral4">Canada Outlook \u00b7 2026\u20132030</p>
           <p class="text-sm font-bold text-neutral6 mt-0.5 leading-snug">${sector.marketOutlook}</p>
         </div>
       </div>
@@ -209,7 +193,7 @@ function renderSalaryCard(sector) {
           <p class="text-lg font-extrabold text-brandNavy mt-1">${seniorPart.replace(/^Senior Pro:\s*/i, '')}</p>
         </div>
       </div>
-      <p class="text-xs text-neutral4 mt-3 leading-relaxed">Typical range for entry to senior-level roles in this sector across Ontario.</p>
+      <p class="text-xs text-neutral4 mt-3 leading-relaxed">Typical range for entry to senior-level roles in this sector across Canada.</p>
     </div>`;
 }
 
@@ -226,36 +210,38 @@ function renderPathwaysCard(sector) {
     </div>`;
 }
 
-function renderCourseConnectorCard(sector) {
-  // --- Property alignment: sponsorData.js stores courses as a flat
-  //     array of 6 strings — but we defensively also accept the older
-  //     { list: [...] } shape in case that ever drifts, so this card
-  //     can never silently break again.
-  const rawCourses = sector.courses;
-  const courseList = Array.isArray(rawCourses)
-    ? rawCourses
-    : (rawCourses && Array.isArray(rawCourses.list)) ? rawCourses.list : [];
-  const hasCourses = courseList.length > 0;
+function renderSubjectsCard(sector) {
+  // --- Property alignment: sponsorData.js stores this as a flat array
+  //     under recommendedSubjects (national/generic — no province-
+  //     specific course codes since those vary by province and board).
+  //     Defensively also accept the old `courses` field name in case a
+  //     stale data file is ever loaded, so this card can't silently break.
+  const rawSubjects = sector.recommendedSubjects || sector.courses;
+  const subjectList = Array.isArray(rawSubjects)
+    ? rawSubjects
+    : (rawSubjects && Array.isArray(rawSubjects.list)) ? rawSubjects.list : [];
+  const hasSubjects = subjectList.length > 0;
 
   return `
-    <div id="course-connector" class="bg-white rounded-2xl border border-neutral2 shadow-card p-6 fade-in-up stagger-3">
+    <div id="subjects-card" class="bg-white rounded-2xl border border-neutral2 shadow-card p-6 fade-in-up stagger-3">
       <div class="flex items-center gap-2.5 mb-3.5">
         <span class="h-8 w-8 rounded-lg bg-brandLightBlue flex items-center justify-center text-brandBlue shrink-0">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         </span>
-        <h2 class="text-lg font-extrabold text-neutral6">Recommended High School Courses</h2>
+        <h2 class="text-lg font-extrabold text-neutral6">Recommended School Subjects</h2>
       </div>
-      <div id="sector-courses" class="grid sm:grid-cols-2 gap-2.5">
-        ${hasCourses ? courseList.map(c => `
+      <div id="sector-subjects" class="grid sm:grid-cols-2 gap-2.5">
+        ${hasSubjects ? subjectList.map(s => `
           <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-brandOffWhite border border-neutral2">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="text-brandBlue shrink-0"><path d="M20 6 9 17l-5-5"/></svg>
-            <span class="text-sm font-semibold text-neutral6">${c}</span>
+            <span class="text-sm font-semibold text-neutral6">${s}</span>
           </div>`).join('') : `
           <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-brandOffWhite border border-neutral2 sm:col-span-2">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="text-neutral4 shrink-0"><path d="M20 6 9 17l-5-5"/></svg>
-            <span class="text-sm font-semibold text-neutral5">OSSD Electives</span>
+            <span class="text-sm font-semibold text-neutral5">General electives</span>
           </div>`}
       </div>
+      <p class="text-[11px] text-neutral4 mt-3 leading-relaxed">Exact course names and codes vary by province and school board \u2014 check with a guidance counsellor for what's offered near you.</p>
     </div>`;
 }
 
@@ -288,7 +274,7 @@ function renderHeroContent(sector) {
     <div class="flex-1 min-w-0 space-y-5">
       ${renderSalaryCard(sector)}
       ${renderPathwaysCard(sector)}
-      ${renderCourseConnectorCard(sector)}
+      ${renderSubjectsCard(sector)}
       ${renderCareerImpactCard(sector)}
     </div>`;
 }
@@ -338,21 +324,33 @@ function sponsorVideoBlock(sponsor, sector) {
 }
 
 function sponsorCard(sponsor, sector, sectorId) {
+  // Real <a> links (not JS-click-dependent buttons) so both the logo
+  // and the CTA work even if a click-handler wiring issue ever recurs.
+  const boothUrl = `booth.html?id=${encodeURIComponent(sectorId)}&sponsor=${encodeURIComponent(sponsor.trackId)}`;
+  const initial = sponsor.name.charAt(0).toUpperCase();
+
   return `
     <div id="sponsor-${sponsor.trackId}" class="sponsor-card bg-white rounded-2xl border border-neutral2 shadow-card p-5">
-      <p class="text-sm font-extrabold text-neutral6">${sponsor.name}</p>
-      <p class="text-xs font-semibold text-neutral4 mt-0.5">${sponsor.role || ''}</p>
+      <div class="flex items-center gap-3 mb-1">
+        <a href="${boothUrl}" aria-label="Enter the ${sponsor.name} booth"
+           class="shrink-0 h-11 w-11 rounded-xl bg-gradient-to-br ${sector.hue} flex items-center justify-center text-white text-lg font-extrabold shadow-sm hover:scale-105 transition-transform">
+          ${initial}
+        </a>
+        <div class="min-w-0">
+          <p class="text-sm font-extrabold text-neutral6 truncate">${sponsor.name}</p>
+          <p class="text-xs font-semibold text-neutral4 truncate">${sponsor.role || ''}</p>
+        </div>
+      </div>
 
       ${sponsorVideoBlock(sponsor, sector)}
 
       <p class="text-xs text-neutral5 leading-relaxed mt-3.5">${sponsor.bio}</p>
 
-      <button
-        class="visit-booth-btn mt-4 w-full flex items-center justify-center gap-2 bg-brandBlue hover:bg-brandNavy text-white text-sm font-bold py-3 rounded-xl shadow-sm shadow-brandBlue/20 transition"
-        data-sector-id="${sectorId}" data-sponsor-track="${sponsor.trackId}">
-        Visit ${sponsor.name} Booth
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </button>
+      <a href="${boothUrl}"
+         class="enter-booth-cta mt-4 w-full flex items-center justify-center gap-2 bg-brandBlue hover:bg-brandNavy text-white text-sm font-extrabold py-3.5 rounded-xl shadow-md shadow-brandBlue/30 hover:shadow-lg hover:shadow-brandBlue/40 hover:-translate-y-0.5 transition-all duration-200">
+        Enter the ${sponsor.name} Booth
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
     </div>`;
 }
 
@@ -362,7 +360,7 @@ function renderRightColumn(sector, sectorId) {
   if (hasSponsors) {
     return `
       <aside class="w-full md:w-[360px] shrink-0 md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] md:overflow-y-auto space-y-4 fade-in-up stagger-5">
-        <p class="text-[11px] font-bold uppercase tracking-wider text-neutral4 px-1">Featured Ontario Employers</p>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-neutral4 px-1">Featured Canadian Employers</p>
         ${sector.sponsors.map(sp => sponsorCard(sp, sector, sectorId)).join('')}
       </aside>`;
   }
@@ -491,15 +489,6 @@ function render(sectorId) {
 
   const bodyEl = document.getElementById('sector-body');
   bodyEl.innerHTML = renderHeroContent(sector) + renderRightColumn(sector, sectorId);
-
-  // Wire up the sidebar's "Visit [Sponsor] Booth" CTA(s) — only present
-  // when the sector actually has sponsors. Always routes to the deep
-  // Tier 2 activity for that specific sponsor.
-  bodyEl.querySelectorAll('.visit-booth-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      routeToBooth(btn.dataset.sectorId, btn.dataset.sponsorTrack, 'tier2');
-    });
-  });
 
   return sector;
 }
